@@ -1,0 +1,8 @@
+.env
+.vscode
+.idea
+**/bin/
+**/out/
+**/logs/
+**/target/
+**/application.properties
