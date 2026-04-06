@@ -1,0 +1,206 @@
+:root {
+    --excel-green: #217346;
+    --excel-green-hover: #1c613b;
+    --excel-light-green: #E6F2EA;
+    --color-danger: #C0392B;
+    --color-warning: #F39C12;
+    --color-text: #323232;
+    --color-bg: #F8F9FA;
+    --color-border: #D2D2D2;
+    --excel-green-border: #009900;
+    --sidebar-width: 240px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    overflow: hidden; /* Hide body scroll, main-content will handle it */
+    height: 100vh;
+}
+
+/* Layout - mimicking BorderLayout */
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Sidebar - mimicking BoxLayout (Y) */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: white;
+    border-right: 2px solid var(--excel-green);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 15px;
+}
+
+.user-info {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--excel-green);
+}
+
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.nav-item {
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--excel-green);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.nav-item:hover {
+    background-color: var(--color-bg);
+}
+
+.nav-item.active {
+    background-color: var(--excel-green);
+    color: white;
+}
+
+.nav-item.logout {
+    color: var(--color-danger);
+    margin-top: auto;
+    border-top: 1px solid var(--color-border);
+    padding: 20px;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#content-area {
+    flex: 1;
+    overflow-y: auto;
+    background-color: white;
+    padding: 0;
+}
+
+/* Swing Components Replication */
+.section-title {
+    padding: 25px 25px 15px 25px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #1E1E1E;
+}
+
+.filter-panel {
+    padding: 15px 25px;
+    background-color: white;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.rounded-input {
+    padding: 8px 12px;
+    border: 1px solid var(--excel-green-border);
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+}
+
+.btn-swing {
+    padding: 10px 25px;
+    border-radius: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.btn-primary { background-color: var(--excel-green); color: white; }
+.btn-primary:hover { background-color: var(--excel-green-hover); }
+
+.btn-danger { background-color: var(--color-danger); color: white; }
+.btn-warning { background-color: var(--color-warning); color: white; }
+
+/* Table Replication */
+.swing-table-container {
+    padding: 20px 100px;
+}
+
+.swing-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--color-border);
+}
+
+.swing-table th {
+    background-color: var(--excel-green);
+    color: white;
+    text-align: left;
+    padding: 12px 10px;
+    font-weight: bold;
+}
+
+.swing-table td {
+    padding: 10px;
+    border: 1px solid var(--color-border);
+}
+
+.swing-table tr:hover {
+    background-color: var(--excel-light-green);
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    background: white;
+    border-radius: 20px;
+    padding: 25px 20px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+.card-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+.card-desc {
+    font-size: 16px;
+    opacity: 0.9;
+}
+.card-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    opacity: 0.8;
+}
+.card-blue { border-left: 5px solid #6464FF; color: #6464FF; }
+.card-red { border-left: 5px solid #FF0A0A; color: #FF0A0A; }
+.card-green { border-left: 5px solid var(--excel-green); color: var(--excel-green); }
