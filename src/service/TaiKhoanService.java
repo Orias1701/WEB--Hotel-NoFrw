@@ -5,11 +5,11 @@ import java.util.List;
 import model.NhanVien;
 import model.TaiKhoan;
 import model.VaiTro;
-import repository.TaiKhoanDAO;
+import repository.TaiKhoanDao;
 
 public class TaiKhoanService {
 
-    private final TaiKhoanDAO dao = new TaiKhoanDAO();
+    private final TaiKhoanDao dao = new TaiKhoanDao();
 
     public List<TaiKhoan> getAll() { return dao.getAll(); }
     public boolean add(TaiKhoan tk) { return dao.insert(tk); }

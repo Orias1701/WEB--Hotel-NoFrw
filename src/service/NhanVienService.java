@@ -4,17 +4,17 @@ import java.util.List;
 
 import model.NhanVien;
 import model.TaiKhoan;
-import repository.NhanVienDAO;
-import repository.TaiKhoanDAO;
+import repository.NhanVienDao;
+import repository.TaiKhoanDao;
 
 public class NhanVienService {
 
-    private final NhanVienDAO nvDAO = new NhanVienDAO();
-    private final TaiKhoanDAO tkDAO = new TaiKhoanDAO();
+    private final NhanVienDao nvDao = new NhanVienDao();
+    private final TaiKhoanDao tkDao = new TaiKhoanDao();
 
     public boolean add(NhanVien nv) {
 
-        int id = nvDAO.insertAndReturnId(nv);
+        int id = nvDao.insertAndReturnId(nv);
 
         if (id <= 0) return false;
 
@@ -26,16 +26,16 @@ public class NhanVienService {
                 2                     // mặc định: nhân viên
         );
 
-        return tkDAO.insert(tk);
+        return tkDao.insert(tk);
     }
 
-    public boolean update(NhanVien nv) { return nvDAO.update(nv); }
-    public boolean delete(int id) { return nvDAO.delete(id); }
-    public List<NhanVien> getAll() { return nvDAO.getAll(); }
-    public NhanVien getById(int id) { return nvDAO.getById(id); }
+    public boolean update(NhanVien nv) { return nvDao.update(nv); }
+    public boolean delete(int id) { return nvDao.delete(id); }
+    public List<NhanVien> getAll() { return nvDao.getAll(); }
+    public NhanVien getById(int id) { return nvDao.getById(id); }
 
     public int countNhanVien() {
-        return nvDAO.countNhanVien();
+        return nvDao.countNhanVien();
     }
 
 }
