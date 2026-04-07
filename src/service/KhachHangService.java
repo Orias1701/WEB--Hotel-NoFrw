@@ -3,11 +3,11 @@ package service;
 import java.util.List;
 
 import model.KhachHang;
-import repository.KhachHangDAO;
+import repository.KhachHangDao;
 
 public class KhachHangService {
 
-    private final KhachHangDAO dao = new KhachHangDAO();
+    private final KhachHangDao dao = new KhachHangDao();
 
     public List<KhachHang> getAll() {
         return dao.getAll();
