@@ -4,10 +4,10 @@ package service;
 import java.util.List;
 
 import model.VaiTro;
-import repository.VaiTroDAO;
+import repository.VaiTroDao;
 
 public class VaiTroService {
-    private final VaiTroDAO dao = new VaiTroDAO();
+    private final VaiTroDao dao = new VaiTroDao();
 
     public List<VaiTro> getAll() { return dao.getAll(); }
     public boolean add(VaiTro vt) { return dao.insert(vt); }
