@@ -21,7 +21,8 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--color-bg);
     color: var(--color-text);
-    overflow: hidden; /* Hide body scroll, main-content will handle it */
+    overflow: hidden;
+    /* Hide body scroll, main-content will handle it */
     height: 100vh;
 }
 
@@ -136,11 +137,24 @@ body {
     transition: background-color 0.2s;
 }
 
-.btn-primary { background-color: var(--excel-green); color: white; }
-.btn-primary:hover { background-color: var(--excel-green-hover); }
+.btn-primary {
+    background-color: var(--excel-green);
+    color: white;
+}
 
-.btn-danger { background-color: var(--color-danger); color: white; }
-.btn-warning { background-color: var(--color-warning); color: white; }
+.btn-primary:hover {
+    background-color: var(--excel-green-hover);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+.btn-warning {
+    background-color: var(--color-warning);
+    color: white;
+}
 
 /* Table Replication */
 .swing-table-container {
@@ -179,21 +193,25 @@ body {
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     border: 1px solid var(--color-border);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
+
 .dashboard-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
+
 .card-title {
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 8px;
 }
+
 .card-desc {
     font-size: 16px;
     opacity: 0.9;
 }
+
 .card-icon {
     position: absolute;
     top: 20px;
@@ -201,6 +219,18 @@ body {
     font-size: 24px;
     opacity: 0.8;
 }
-.card-blue { border-left: 5px solid #6464FF; color: #6464FF; }
-.card-red { border-left: 5px solid #FF0A0A; color: #FF0A0A; }
-.card-green { border-left: 5px solid var(--excel-green); color: var(--excel-green); }
+
+.card-blue {
+    border-left: 5px solid #6464FF;
+    color: #6464FF;
+}
+
+.card-red {
+    border-left: 5px solid #FF0A0A;
+    color: #FF0A0A;
+}
+
+.card-green {
+    border-left: 5px solid var(--excel-green);
+    color: var(--excel-green);
+}
