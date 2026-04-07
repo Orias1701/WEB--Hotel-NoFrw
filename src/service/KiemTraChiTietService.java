@@ -4,11 +4,11 @@ import java.util.List;
 import model.KiemTraChiTiet;
 import model.KiemTraPhong;
 import model.ThietBiPhong;
-import repository.KiemTraChiTietDAO;
+import repository.KiemTraChiTietDao;
 
 public class KiemTraChiTietService {
 
-    private KiemTraChiTietDAO dao = new KiemTraChiTietDAO();
+    private KiemTraChiTietDao dao = new KiemTraChiTietDao();
     private ThietBiPhongService tbPhongService = new ThietBiPhongService();
     private KiemTraPhongService ktPhongService = new KiemTraPhongService();
     // private ThietBiService thietBiService = new ThietBiService();
