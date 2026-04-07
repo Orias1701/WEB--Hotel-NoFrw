@@ -4,7 +4,7 @@
  */
 function loadModule(moduleName, title) {
     console.log(`Loading module: ${moduleName}`);
-    
+
     // Update active state in sidebar
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
