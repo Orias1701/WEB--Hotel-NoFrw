@@ -17,8 +17,12 @@ function loadModule(moduleName, title) {
     // Update Browser title
     document.title = `Hệ Thống Quản Lý Khách Sạn - ${title}`;
 
-    // AJAX request to MainServlet
-    fetch(`main?view=${moduleName}`)
+    // AJAX request to MainServlet with header to distinguish from full page load
+    fetch(`main?view=${moduleName}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
