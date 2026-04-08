@@ -20,12 +20,21 @@ public class MainServlet extends HttpServlet {
             return;
         }
 
-        // Check if it's an AJAX request to load a module
+        // Differentiate between AJAX fragment loading and full page reloads
         String module = request.getParameter("view");
+        String requestedWith = request.getHeader("X-Requested-With");
+        boolean isAjax = "XMLHttpRequest".equals(requestedWith);
+
         if (module != null && !module.isEmpty()) {
-            // Forward to the data-providing servlet for this module
-            request.getRequestDispatcher("/" + module + "-data").forward(request, response);
-            return;
+            if (isAjax) {
+                // AJAX request: Forward to the fragment-providing servlet
+                request.getRequestDispatcher("/" + module + "-data").forward(request, response);
+                return;
+            } else {
+                // Full page load (e.g. after CRUD redirect): 
+                // Set initial view and load the main container
+                request.setAttribute("initialView", module);
+            }
         }
 
         // Initial load of the main layout
