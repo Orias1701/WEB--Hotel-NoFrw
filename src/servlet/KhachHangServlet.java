@@ -21,7 +21,6 @@ public class KhachHangServlet extends HttpServlet {
         
         List<KhachHang> listKhachHang = khachHangService.getAll();
         request.setAttribute("listKhachHang", listKhachHang);
-        
         request.getRequestDispatcher("khach-hang.jsp").forward(request, response);
     }
 

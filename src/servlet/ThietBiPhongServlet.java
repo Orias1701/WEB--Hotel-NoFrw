@@ -25,7 +25,8 @@ public class ThietBiPhongServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setAttribute("listThietBiPhong", tbpService.getAll());
+        java.util.List<ThietBiPhong> listTBP = tbpService.getAll();
+        request.setAttribute("listThietBiPhong", listTBP);
         request.setAttribute("listPhong", phongService.getAll());
         request.setAttribute("listThietBi", thietBiService.getAll());
 

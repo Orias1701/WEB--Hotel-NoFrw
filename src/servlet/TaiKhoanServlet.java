@@ -25,7 +25,8 @@ public class TaiKhoanServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setAttribute("listTaiKhoan", taiKhoanService.getAll());
+        java.util.List<TaiKhoan> listTaiKhoan = taiKhoanService.getAll();
+        request.setAttribute("listTaiKhoan", listTaiKhoan);
         request.setAttribute("listNhanVien", nhanVienService.getAll());
         request.setAttribute("listVaiTro", vaiTroService.getAll());
 

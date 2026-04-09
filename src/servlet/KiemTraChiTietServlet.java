@@ -28,7 +28,8 @@ public class KiemTraChiTietServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setAttribute("listKiemTraChiTiet", ktctService.getAll());
+        java.util.List<KiemTraChiTiet> listKTCT = ktctService.getAll();
+        request.setAttribute("listKiemTraChiTiet", listKTCT);
         request.setAttribute("listKiemTraPhong", ktpService.getAll());
         request.setAttribute("listThietBi", thietBiService.getAll());
 

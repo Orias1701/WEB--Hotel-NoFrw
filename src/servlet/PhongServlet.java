@@ -30,7 +30,6 @@ public class PhongServlet extends HttpServlet {
         List<LoaiPhong> listLoaiPhong = loaiPhongService.getAll();
         request.setAttribute("listLoaiPhong", listLoaiPhong);
 
-        // 3. Forward to the fragment
         request.getRequestDispatcher("phong.jsp").forward(request, response);
     }
 

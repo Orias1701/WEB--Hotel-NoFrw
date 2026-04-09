@@ -1,6 +1,7 @@
 package servlet;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,7 +28,25 @@ public class HoaDonServlet extends HttpServlet {
         
         request.getRequestDispatcher("hoa-don.jsp").forward(request, response);
     }
-    
-    // Invoices are usually created by DatPhong or other modules, 
-    // so no direct CRUD POST here for now.
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        try {
+            if ("pay".equals(action)) {
+                int id = Integer.parseInt(request.getParameter("maHoaDon"));
+                HoaDon hd = hoaDonService.getById(id);
+                if (hd != null && !"Đã thanh toán".equals(hd.getTrangThai())) {
+                    hd.setTrangThai("Đã thanh toán");
+                    hd.setNgayThanhToan(new Timestamp(System.currentTimeMillis()));
+                    hoaDonService.update(hd);
+                }
+            }
+            response.sendRedirect("main?view=hoa-don");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi thanh toán hóa đơn");
+        }
+    }
 }
