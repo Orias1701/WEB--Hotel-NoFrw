@@ -219,18 +219,18 @@ BEGIN
     FOR tang IN 1..5 LOOP
         -- 1 Phòng VIP mỗi tầng
         INSERT INTO a_phong (soPhong, maLoaiPhong, trangThai) 
-        VALUES ('V' || tang || '01', 3, 'Sẵn sàng');
+        VALUES ('V' || tang || '01', 3, 'Trống');
 
         -- 2 Phòng Premium mỗi tầng
         INSERT INTO a_phong (soPhong, maLoaiPhong, trangThai) 
-        VALUES ('P' || tang || '01', 2, 'Sẵn sàng'),
-               ('P' || tang || '02', 2, 'Sẵn sàng');
+        VALUES ('P' || tang || '01', 2, 'Trống'),
+               ('P' || tang || '02', 2, 'Trống');
 
         -- 3 Phòng Luxury mỗi tầng
         INSERT INTO a_phong (soPhong, maLoaiPhong, trangThai) 
-        VALUES ('L' || tang || '01', 1, 'Sẵn sàng'),
-               ('L' || tang || '02', 1, 'Sẵn sàng'),
-               ('L' || tang || '03', 1, 'Sẵn sàng');
+        VALUES ('L' || tang || '01', 1, 'Trống'),
+               ('L' || tang || '02', 1, 'Trống'),
+               ('L' || tang || '03', 1, 'Trống');
     END LOOP;
 END $$;
 
