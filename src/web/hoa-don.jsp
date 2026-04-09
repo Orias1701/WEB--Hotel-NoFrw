@@ -4,22 +4,31 @@
 
 <div class="section-title">HÓA ĐƠN</div>
 
+<style>
+    .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+    .status-paid { background-color: #e6f7ef; color: var(--excel-green); border: 1px solid var(--excel-green); }
+    .status-unpaid { background-color: #fff0f0; color: #ff4d4d; border: 1px solid #ff4d4d; }
+</style>
+
 <div style="padding: 10px 25px;">
-    <!-- Filter Panel -->
-    <div class="filter-panel">
-        <label>Tìm kiếm:</label>
-        <input type="text" id="txtSearchHD" class="rounded-input" placeholder="Nhập mã HD hoặc tên khách..." onkeyup="filterHDTable()">
-        
-        <label style="margin-left: 20px;">Trạng thái:</label>
-        <select id="cboFilterHD" class="rounded-input" onchange="filterHDTable()">
-            <option value="all">Tất cả</option>
-            <option value="Chưa thanh toán">Chưa thanh toán</option>
-            <option value="Đã thanh toán">Đã thanh toán</option>
-        </select>
+    <!-- Toolbar -->
+    <div class="toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 25px; background-color: white; border: 1px solid var(--color-border); border-radius: 10px;">
+        <div class="search-box">
+            <label style="margin-right: 10px; font-weight: bold;">Tìm kiếm:</label>
+            <input type="text" id="txtSearchHD" class="rounded-input" placeholder="Nhập mã HD hoặc tên khách..." onkeyup="filterHDTable()" style="width: 280px;">
+            
+            <label style="margin-left: 20px; margin-right: 10px; font-weight: bold;">Trạng thái:</label>
+            <select id="cboFilterHD" class="rounded-input" onchange="filterHDTable()">
+                <option value="all">Tất cả</option>
+                <option value="Chưa thanh toán">Chưa thanh toán</option>
+                <option value="Đã thanh toán">Đã thanh toán</option>
+            </select>
+        </div>
+        <span style="font-size: 13px; color: #888;">Hóa đơn được tạo tự động qua Đặt phòng</span>
     </div>
 
     <!-- Table Content -->
-    <div class="swing-table-container" style="max-height: 350px; overflow-y: auto; padding: 20px 0;">
+    <div class="swing-table-container" style="max-height: calc(100vh - 220px); overflow-y: auto; padding: 0;">
         <table class="swing-table" id="tblHD">
             <thead>
                 <tr>
@@ -29,6 +38,7 @@
                     <th>Ngày thanh toán</th>
                     <th>Tổng tiền</th>
                     <th>Trạng thái</th>
+                    <th style="width: 110px; text-align: center;">Hành động</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,6 +46,7 @@
                     <tr onclick="onHDRowClick(this)" 
                         data-id="${hd.getMaHoaDon()}" 
                         data-makhach="${hd.getMaKhachHang()}"
+                        data-tenkhach="${hd.getTenKhachHang()}"
                         data-ngaytao="<fmt:formatDate value='${hd.getNgayTao()}' pattern='dd/MM/yyyy HH:mm' />"
                         data-ngaytt="<fmt:formatDate value='${hd.getNgayThanhToan()}' pattern='dd/MM/yyyy HH:mm' />"
                         data-tongtien="${hd.getTongTien()}"
@@ -50,63 +61,24 @@
                                 ${hd.getTrangThai()}
                             </span>
                         </td>
+                        <td class="action-cell">
+                            <c:if test="${hd.getTrangThai() != 'Đã thanh toán'}">
+                                <form id="frmPayHD_${hd.getMaHoaDon()}" action="hoa-don-data" method="post" style="display:none;">
+                                    <input type="hidden" name="action" value="pay">
+                                    <input type="hidden" name="maHoaDon" value="${hd.getMaHoaDon()}">
+                                </form>
+                                <button type="button" class="btn-swing btn-primary" style="padding: 5px 10px; font-size: 13px; background-color: #217346;"
+                                    onclick="event.stopPropagation(); confirmPay(this.closest('tr').dataset.id);">Thanh toán</button>
+                            </c:if>
+                        </td>
                     </tr>
                 </c:forEach>
             </tbody>
         </table>
     </div>
-
-    <!-- Details View (TitledBorder style) -->
-    <div style="margin-top: 30px; border: 1px solid var(--excel-green); border-radius: 10px; padding: 25px; position: relative; background: white;">
-        <span style="position: absolute; top: -12px; left: 20px; background: white; padding: 0 10px; color: var(--excel-green); font-weight: bold; font-size: 16px;">
-            Chi tiết hóa đơn
-        </span>
-        
-        <div style="display: grid; grid-template-columns: 1fr 2fr 1fr 2fr; gap: 20px; align-items: center;">
-            <label>Mã hóa đơn:</label>
-            <input type="text" id="hdMa" class="rounded-input" readonly style="background-color: #f0f0f0;">
-            
-            <label>Khách hàng:</label>
-            <input type="text" id="hdKhach" class="rounded-input" readonly style="background-color: #f0f0f0;">
-            
-            <label>Ngày tạo:</label>
-            <input type="text" id="hdNgayTao" class="rounded-input" readonly style="background-color: #f0f0f0;">
-            
-            <label>Ngày thanh toán:</label>
-            <input type="text" id="hdNgayTT" class="rounded-input" readonly style="background-color: #f0f0f0;">
-            
-            <label>Tổng tiền:</label>
-            <input type="text" id="hdTongTien" class="rounded-input" readonly style="background-color: #f0f0f0; color: var(--excel-green); font-weight: bold;">
-            
-            <label>Trạng thái:</label>
-            <input type="text" id="hdTrangThai" class="rounded-input" readonly style="background-color: #f0f0f0;">
-        </div>
-
-        <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
-            <button class="btn-swing btn-primary" onclick="window.print()">In hóa đơn (A4)</button>
-            <button class="btn-swing" style="background: #6c757d; color: white;" onclick="clearHDView()">Làm mới</button>
-        </div>
-    </div>
 </div>
 
-<style>
-    .status-badge {
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: bold;
-    }
-    .status-paid {
-        background-color: #e6f7ef;
-        color: var(--excel-green);
-        border: 1px solid var(--excel-green);
-    }
-    .status-unpaid {
-        background-color: #fff0f0;
-        color: #ff4d4d;
-        border: 1px solid #ff4d4d;
-    }
-</style>
+<jsp:include page="hoa-don-form.jsp" />
 
 <script>
 function onHDRowClick(row) {
@@ -114,23 +86,13 @@ function onHDRowClick(row) {
     rows.forEach(r => r.style.backgroundColor = '');
     row.style.backgroundColor = 'var(--excel-light-green)';
 
-    document.getElementById('hdMa').value = row.dataset.id;
-    document.getElementById('hdKhach').value = row.cells[1].innerText;
-    document.getElementById('hdNgayTao').value = row.dataset.ngaytao;
-    document.getElementById('hdNgayTT').value = row.dataset.ngaytt;
-    document.getElementById('hdTongTien').value = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(row.dataset.tongtien);
-    document.getElementById('hdTrangThai').value = row.dataset.trangthai;
+    openHoaDonModal(row.dataset);
 }
 
-function clearHDView() {
-    document.getElementById('hdMa').value = '';
-    document.getElementById('hdKhach').value = '';
-    document.getElementById('hdNgayTao').value = '';
-    document.getElementById('hdNgayTT').value = '';
-    document.getElementById('hdTongTien').value = '';
-    document.getElementById('hdTrangThai').value = '';
-    const rows = document.querySelectorAll('#tblHD tbody tr');
-    rows.forEach(r => r.style.backgroundColor = '');
+function confirmPay(hoaDonId) {
+    if (confirm('Xác nhận thanh toán hóa đơn #' + hoaDonId + '?')) {
+        document.getElementById('frmPayHD_' + hoaDonId).submit();
+    }
 }
 
 function filterHDTable() {
