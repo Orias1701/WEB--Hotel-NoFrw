@@ -234,3 +234,69 @@ body {
     border-left: 5px solid var(--excel-green);
     color: var(--excel-green);
 }
+
+/* Modal Overlays & Forms */
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal-overlay.active {
+    display: flex;
+}
+.modal-content {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    min-width: 500px;
+    max-width: 800px;
+}
+.modal-header {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--excel-green);
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--excel-green);
+    padding-bottom: 10px;
+}
+.modal-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+.form-group label {
+    font-weight: 500;
+}
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.action-cell {
+    text-align: center;
+}
+.swing-table tr[onclick] {
+    cursor: pointer;
+}
