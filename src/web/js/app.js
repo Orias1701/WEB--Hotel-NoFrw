@@ -17,7 +17,7 @@ function loadModule(moduleName, title) {
     // Update Browser title
     document.title = `Hệ Thống Quản Lý Khách Sạn - ${title}`;
 
-    // AJAX request to MainServlet with header to distinguish from full page load
+    // AJAX request to MainServlet
     fetch(`main?view=${moduleName}`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -31,7 +31,17 @@ function loadModule(moduleName, title) {
         })
         .then(html => {
             // Inject fragment into content area
-            document.getElementById('content-area').innerHTML = html;
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = html;
+            
+            // Execute scripts inside the loaded fragment
+            const scripts = contentArea.querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
         })
         .catch(error => {
             console.error('Error loading module:', error);
