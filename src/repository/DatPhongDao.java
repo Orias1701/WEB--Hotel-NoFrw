@@ -98,6 +98,47 @@ public class DatPhongDao {
         return null;
     }
 
+    // GET ALL BY MA HOA DON
+    public List<DatPhong> getAllByMaHoaDon(int maHoaDon) {
+        List<DatPhong> list = new ArrayList<>();
+        String sql = """
+            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong 
+            FROM a_datphong dp
+            JOIN z_hoadon hd ON dp.maHoaDon = hd.maHoaDon
+            JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
+            JOIN a_phong p ON dp.maPhong = p.maPhong
+            WHERE dp.maHoaDon = ?
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, maHoaDon);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    DatPhong dp = new DatPhong(
+                            rs.getInt("maDatPhong"),
+                            rs.getInt("maHoaDon"),
+                            rs.getInt("maNhanVien"),
+                            rs.getInt("maPhong"),
+                            rs.getTimestamp("ngayDatPhong"),
+                            rs.getTimestamp("ngayNhanPhong"),
+                            rs.getTimestamp("ngayHenTra"),
+                            rs.getTimestamp("ngayTraPhong"),
+                            rs.getTimestamp("ngayThanhToan"),
+                            rs.getBigDecimal("tienPhong"),
+                            rs.getBigDecimal("tienPhat")
+                    );
+                    dp.setTenKhachHang(rs.getString("tenKhachHang"));
+                    dp.setMaKhachHang(rs.getInt("maKhachHang"));
+                    dp.setSoPhong(rs.getString("soPhong"));
+                    list.add(dp);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     // ADD BOOKING
     public boolean add(DatPhong d) {
 
