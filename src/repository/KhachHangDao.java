@@ -11,7 +11,7 @@ public class KhachHangDao {
 
     public List<KhachHang> getAll() {
         List<KhachHang> list = new ArrayList<>();
-        String sql = "SELECT * FROM x_khachhang";
+        String sql = "SELECT * FROM x_khachhang ORDER BY maKhachHang DESC";
 
         try (Connection con = DBConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql);
