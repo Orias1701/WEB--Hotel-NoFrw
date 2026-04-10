@@ -10,7 +10,7 @@ public class LoaiPhongDao {
 
     public List<LoaiPhong> getAll() {
         List<LoaiPhong> list = new ArrayList<>();
-        String sql = "SELECT * FROM a_loaiphong";
+        String sql = "SELECT * FROM a_loaiphong ORDER BY maLoaiPhong DESC";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);

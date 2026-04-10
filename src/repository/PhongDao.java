@@ -16,6 +16,7 @@ public class PhongDao {
                     SELECT p.maPhong, p.soPhong, l.tenLoaiPhong, p.trangThai
                     FROM a_phong p
                     LEFT JOIN a_loaiphong l ON p.maLoaiPhong = l.maLoaiPhong
+                    ORDER BY p.maPhong DESC
                 """;
 
         try (Connection conn = DBConnection.getConnection();
