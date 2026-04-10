@@ -11,7 +11,7 @@ public class VaiTroDao {
 
     public List<VaiTro> getAll() {
         List<VaiTro> list = new ArrayList<>();
-        String sql = "SELECT * FROM y_vaitro";
+        String sql = "SELECT * FROM y_vaitro ORDER BY maVaiTro DESC";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);

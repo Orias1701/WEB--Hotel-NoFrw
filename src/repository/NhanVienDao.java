@@ -11,7 +11,7 @@ public class NhanVienDao {
 
     public List<NhanVien> getAll() {
         List<NhanVien> list = new ArrayList<>();
-        String sql = "SELECT * FROM y_nhanvien";
+        String sql = "SELECT * FROM y_nhanvien ORDER BY maNhanVien DESC";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);

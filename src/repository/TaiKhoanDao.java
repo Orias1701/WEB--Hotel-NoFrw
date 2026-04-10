@@ -18,6 +18,7 @@ public class TaiKhoanDao {
             FROM y_taikhoan tk
             JOIN y_nhanvien nv ON tk.maNhanVien = nv.maNhanVien
             JOIN y_vaitro vt ON tk.maVaiTro = vt.maVaiTro
+            ORDER BY tk.id DESC
         """;
 
         try (Connection con = DBConnection.getConnection();
@@ -39,6 +40,41 @@ public class TaiKhoanDao {
 
         } catch (Exception e) {
             System.out.println("❌ Lỗi getAll TK: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public List<TaiKhoan> getByMaNhanVien(int maNV) {
+        List<TaiKhoan> list = new ArrayList<>();
+        String sql = """
+            SELECT tk.*, nv.tenNhanVien, vt.tenVaiTro 
+            FROM y_taikhoan tk
+            JOIN y_nhanvien nv ON tk.maNhanVien = nv.maNhanVien
+            JOIN y_vaitro vt ON tk.maVaiTro = vt.maVaiTro
+            WHERE tk.maNhanVien = ?
+        """;
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, maNV);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                TaiKhoan tk = new TaiKhoan(
+                        rs.getInt("id"),
+                        rs.getString("taiKhoan"),
+                        rs.getString("matKhau"),
+                        rs.getInt("maNhanVien"),
+                        rs.getInt("maVaiTro")
+                );
+                tk.setTenNhanVien(rs.getString("tenNhanVien"));
+                tk.setTenVaiTro(rs.getString("tenVaiTro"));
+                list.add(tk);
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi getByMaNhanVien TK: " + e.getMessage());
         }
         return list;
     }
@@ -93,6 +129,41 @@ public class TaiKhoanDao {
 
         } catch (Exception e) {
             System.out.println("❌ Lỗi delete TK: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updatePassword(int id, String newPass) {
+        String sql = "UPDATE y_taikhoan SET matKhau=? WHERE id=?";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, newPass);
+            ps.setInt(2, id);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi updatePassword TK: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updateAccount(int id, String newUser, String newPass) {
+        String sql = "UPDATE y_taikhoan SET taiKhoan=?, matKhau=? WHERE id=?";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, newUser);
+            ps.setString(2, newPass);
+            ps.setInt(3, id);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi updateAccount TK: " + e.getMessage());
             return false;
         }
     }
