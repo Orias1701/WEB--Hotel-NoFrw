@@ -31,8 +31,22 @@ public class NhanVienService {
 
     public boolean update(NhanVien nv) { return nvDao.update(nv); }
     public boolean delete(int id) { return nvDao.delete(id); }
-    public List<NhanVien> getAll() { return nvDao.getAll(); }
-    public NhanVien getById(int id) { return nvDao.getById(id); }
+    
+    public List<NhanVien> getAll() { 
+        List<NhanVien> list = nvDao.getAll();
+        for (NhanVien nv : list) {
+            nv.setListTaiKhoan(tkDao.getByMaNhanVien(nv.getMaNhanVien()));
+        }
+        return list; 
+    }
+    
+    public NhanVien getById(int id) { 
+        NhanVien nv = nvDao.getById(id);
+        if (nv != null) {
+            nv.setListTaiKhoan(tkDao.getByMaNhanVien(nv.getMaNhanVien()));
+        }
+        return nv;
+    }
 
     public int countNhanVien() {
         return nvDao.countNhanVien();

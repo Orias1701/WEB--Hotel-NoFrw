@@ -18,9 +18,8 @@ public class DeletionCheckService {
                 case "nhanvien":
                     sql = "SELECT (SELECT COUNT(*) FROM y_taikhoan WHERE maNhanVien = ?) + " +
                           "(SELECT COUNT(*) FROM z_hoadon WHERE maNhanVien = ?) + " + 
-                          "(SELECT COUNT(*) FROM a_datphong WHERE maNhanVien = ?) + " +
-                          "(SELECT COUNT(*) FROM b_kiemtrachitiet WHERE maNhanVien = ?)";
-                    return executeCount(con, sql, id, id, id, id) == 0;
+                          "(SELECT COUNT(*) FROM a_datphong WHERE maNhanVien = ?)";
+                    return executeCount(con, sql, id, id, id) == 0;
                 case "taikhoan":
                     return true;
                 case "khachhang":
@@ -30,16 +29,8 @@ public class DeletionCheckService {
                     sql = "SELECT COUNT(*) FROM a_phong WHERE maLoaiPhong = ?";
                     break;
                 case "phong":
-                    sql = "SELECT (SELECT COUNT(*) FROM b_thietbiphong WHERE maPhong = ?) + " +
-                          "(SELECT COUNT(*) FROM a_datphong WHERE maPhong = ?) + " +
-                          "(SELECT COUNT(*) FROM b_kiemtraphong WHERE maPhong = ?)";
-                    return executeCount(con, sql, id, id, id) == 0;
-                case "thietbi":
-                    sql = "SELECT COUNT(*) FROM b_thietbiphong WHERE maThietBi = ?";
-                    break;
-                case "thietbiphong":
-                    sql = "SELECT COUNT(*) FROM b_kiemtrachitiet WHERE maThietBiPhong = ?";
-                    break;
+                    sql = "SELECT COUNT(*) FROM a_datphong WHERE maPhong = ?";
+
                 case "hoadon":
                     // Cascade deletes in DatPhong & KiemTraPhong if we delete HoaDon? 
                     // Wait, actually the HoaDao delete throws exception if there are dependencies
@@ -50,11 +41,7 @@ public class DeletionCheckService {
                     // DatPhong can be deleted if HoaDon is not "Đã thanh toán"
                     // But maybe just let it be true and backend check fails
                     return true;
-                case "kiemtraphong":
-                    sql = "SELECT COUNT(*) FROM b_kiemtrachitiet WHERE maKiemTraPhong = ?";
-                    break;
-                case "kiemtrachitiet":
-                    return true;
+
             }
             if (!sql.isEmpty() && sql.contains("?")) {
                 return executeCount(con, sql, id) == 0;

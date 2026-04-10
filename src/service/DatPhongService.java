@@ -27,6 +27,10 @@ public class DatPhongService {
         return dao.getById(id);
     }
 
+    public List<DatPhong> getAllByMaHoaDon(int maHoaDon) {
+        return dao.getAllByMaHoaDon(maHoaDon);
+    }
+
     // ✅ Trả phòng
     public boolean traPhong(int id, Timestamp ngayTra, BigDecimal tienPhong, BigDecimal tienPhat) {
         return dao.traPhong(id, ngayTra, tienPhong, tienPhat);

@@ -21,4 +21,12 @@ public class TaiKhoanService {
     public TaiKhoan login(String user, String pass) {
         return dao.checkLogin(user, pass);
     }
+
+    public boolean updatePassword(int id, String newPass) {
+        return dao.updatePassword(id, newPass);
+    }
+
+    public boolean updateAccount(int id, String newUser, String newPass) {
+        return dao.updateAccount(id, newUser, newPass);
+    }
 }
