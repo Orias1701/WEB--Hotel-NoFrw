@@ -1,11 +1,14 @@
 package model;
 
+import java.util.List;
+
 public class NhanVien {
 
     private int maNhanVien;
     private String tenNhanVien;
     private String soDienThoai;
     private String email;
+    private List<TaiKhoan> listTaiKhoan;
 
     public NhanVien() {}
 
@@ -46,6 +49,14 @@ public class NhanVien {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<TaiKhoan> getListTaiKhoan() {
+        return listTaiKhoan;
+    }
+
+    public void setListTaiKhoan(List<TaiKhoan> listTaiKhoan) {
+        this.listTaiKhoan = listTaiKhoan;
     }
 
     @Override
