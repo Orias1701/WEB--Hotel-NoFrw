@@ -1,8 +1,8 @@
--- PostgreSQL Database Schema for hotelmanage
+-- PostgreSQL Database Schema for hotelbook
 -- Migrated from SQL Server
 
-CREATE SCHEMA IF NOT EXISTS hotelmanage;
-SET search_path TO hotelmanage;
+CREATE SCHEMA IF NOT EXISTS hotelbook;
+SET search_path TO hotelbook;
 
 ------------------------------------------
 -- y_vaitro
@@ -54,14 +54,7 @@ CREATE TABLE a_loaiphong (
   giaCoBan DECIMAL(15, 2) NOT NULL
 );
 
-------------------------------------------
--- b_thietbi
-------------------------------------------
-CREATE TABLE b_thietbi (
-  maThietBi SERIAL PRIMARY KEY,
-  tenThietBi VARCHAR(100),
-  giaThietBi DECIMAL(15, 2)
-);
+
 
 ------------------------------------------
 -- a_phong
@@ -74,18 +67,7 @@ CREATE TABLE a_phong (
   FOREIGN KEY (maLoaiPhong) REFERENCES a_loaiphong(maLoaiPhong)
 );
 
-------------------------------------------
--- b_thietbiphong
-------------------------------------------
-CREATE TABLE b_thietbiphong (
-  maThietBiPhong SERIAL PRIMARY KEY,
-  maPhong INT,
-  maThietBi INT,
-  soLuong INT DEFAULT 1,
-  trangThai VARCHAR(20),
-  FOREIGN KEY (maPhong) REFERENCES a_phong(maPhong) ON DELETE CASCADE,
-  FOREIGN KEY (maThietBi) REFERENCES b_thietbi(maThietBi) ON DELETE CASCADE
-);
+
 
 ------------------------------------------
 -- z_hoadon
@@ -102,34 +84,9 @@ CREATE TABLE z_hoadon (
   FOREIGN KEY (maKhachHang) REFERENCES x_khachhang(maKhachHang)
 );
 
-------------------------------------------
--- b_kiemtraphong
-------------------------------------------
-CREATE TABLE b_kiemtraphong (
-  maKiemTraPhong SERIAL PRIMARY KEY,
-  maHoaDon INT,
-  maPhong INT,
-  ngayThanhToan TIMESTAMP,
-  tienBoiThuong DECIMAL(15, 2),
-  FOREIGN KEY (maHoaDon) REFERENCES z_hoadon(maHoaDon) ON DELETE CASCADE,
-  FOREIGN KEY (maPhong) REFERENCES a_phong(maPhong) ON DELETE SET NULL
-);
 
-------------------------------------------
--- b_kiemtrachitiet
-------------------------------------------
-CREATE TABLE b_kiemtrachitiet (
-  maKiemTraChiTiet SERIAL PRIMARY KEY,
-  maNhanVien INT,
-  maKiemTraPhong INT,
-  maThietBiPhong INT,
-  ngayKiemTra TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  soLuongBiHong INT,
-  ghiChu TEXT,
-  FOREIGN KEY (maNhanVien) REFERENCES y_nhanvien(maNhanVien),
-  FOREIGN KEY (maKiemTraPhong) REFERENCES b_kiemtraphong(maKiemTraPhong) ON DELETE CASCADE,
-  FOREIGN KEY (maThietBiPhong) REFERENCES b_thietbiphong(maThietBiPhong)
-);
+
+
 
 ------------------------------------------
 -- a_datphong

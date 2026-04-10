@@ -1,18 +1,14 @@
--- PostgreSQL Data Seed for hotelmanage
--- Migrated from SQL Server
+-- PostgreSQL Data Seed for hotelbook
+-- Cập nhật dữ liệu mẫu (Mock Data) với số lượng lớn và logic thời gian thực tế
 
-SET search_path TO hotelmanage;
+SET search_path TO hotelbook;
 
 -----------------------------------------------------------
--- 1. XÓA DỮ LIỆU CŨ (NẾU CÓ) ĐỂ TRÁNH TRÙNG LẶP
+-- 1. XÓA DỮ LIỆU CŨ VÀ RESET ID SEQUENCE
 -----------------------------------------------------------
-TRUNCATE b_kiemtrachitiet,
-b_kiemtraphong,
-a_datphong,
+TRUNCATE a_datphong,
 z_hoadon,
-b_thietbiphong,
 a_phong,
-b_thietbi,
 a_loaiphong,
 y_taikhoan,
 x_khachhang,
@@ -20,71 +16,30 @@ y_nhanvien,
 y_vaitro RESTART IDENTITY CASCADE;
 
 -----------------------------------------------------------
--- 2. DỮ LIỆU CƠ BẢN (VAI TRÒ, LOẠI PHÒNG, THIẾT BỊ)
+-- 2. DỮ LIỆU CƠ BẢN: VAI TRÒ & LOẠI PHÒNG
 -----------------------------------------------------------
-
--- Vai trò
+-- Vai trò (Giữ nguyên 2 vai trò)
 INSERT INTO
     y_vaitro (maVaiTro, tenVaiTro)
 VALUES (1, 'Admin'),
-    (2, 'Nhân viên Đặt phòng'),
-    (3, 'Nhân viên Kiểm tra');
+    (2, 'Nhân viên');
 
--- Loại phòng (Luxury, Premium, VIP)
+-- Loại phòng (Standard, Luxury, VIP theo yêu cầu chữ cái S, L, V)
 INSERT INTO
     a_loaiphong (
         maLoaiPhong,
         tenLoaiPhong,
         giaCoBan
     )
-VALUES (1, 'Luxury', 80000), -- 80k/h
-    (2, 'Premium', 180000), -- 180k/h
+VALUES (1, 'Standard', 80000), -- Ký hiệu S (Normal)
+    (2, 'Luxury', 180000), -- Ký hiệu L
     (3, 'VIP', 300000);
--- 300k/h
-
--- Thiết bị (10 loại)
-INSERT INTO
-    b_thietbi (
-        maThietBi,
-        tenThietBi,
-        giaThietBi
-    )
-VALUES (
-        1,
-        'Smart TV 55 inch',
-        12000000
-    ),
-    (2, 'Tủ lạnh mini', 3500000),
-    (
-        3,
-        'Điều hòa 2 chiều',
-        9000000
-    ),
-    (4, 'Máy sấy tóc', 500000),
-    (
-        5,
-        'Giường King Size',
-        15000000
-    ),
-    (6, 'Ghế Sofa da', 8000000),
-    (7, 'Bàn làm việc gỗ', 4000000),
-    (
-        8,
-        'Đèn chùm trang trí',
-        2500000
-    ),
-    (9, 'Két sắt điện tử', 3000000),
-    (
-        10,
-        'Bồn tắm Massage',
-        20000000
-    );
+-- Ký hiệu V
 
 -----------------------------------------------------------
--- 3. NHÂN VIÊN & TÀI KHOẢN
--------------------------------------------
-
--- Nhân viên (1 Admin, 2 Đặt phòng, 2 Kiểm tra)
+-- 3. NHÂN VIÊN & TÀI KHOẢN (1 Admin, 10 Nhân viên)
+-----------------------------------------------------------
+-- Admin (Giữ nguyên như cũ)
 INSERT INTO
     y_nhanvien (
         maNhanVien,
@@ -97,33 +52,8 @@ VALUES (
         'Nguyễn Quản Lý',
         '0901000001',
         'admin@hotel.com'
-    ),
-    (
-        2,
-        'Trần Đặt Phòng A',
-        '0901000002',
-        'sale1@hotel.com'
-    ),
-    (
-        3,
-        'Lê Đặt Phòng B',
-        '0901000003',
-        'sale2@hotel.com'
-    ),
-    (
-        4,
-        'Phạm Kiểm Tra A',
-        '0901000004',
-        'checker1@hotel.com'
-    ),
-    (
-        5,
-        'Hoàng Kiểm Tra B',
-        '0901000005',
-        'checker2@hotel.com'
     );
 
--- Tài khoản
 INSERT INTO
     y_taikhoan (
         id,
@@ -132,350 +62,179 @@ INSERT INTO
         maNhanVien,
         maVaiTro
     )
-VALUES (1, 'admin', '123456', 1, 1),
-    (2, 'sale1', '123456', 2, 2),
-    (3, 'sale2', '123456', 3, 2),
-    (4, 'check1', '123456', 4, 3),
-    (5, 'check2', '123456', 5, 3);
+VALUES (1, 'admin', '123456', 1, 1);
 
------------------------------------------------------------
--- 4. KHÁCH HÀNG (10 người)
------------------------------------------------------------
-INSERT INTO
-    x_khachhang (
-        maKhachHang,
-        tenKhachHang,
-        soDienThoai,
-        email
-    )
-VALUES (
-        1,
-        'Nguyễn Văn Khách 1',
-        '0987654321',
-        'k1@gmail.com'
-    ),
-    (
-        2,
-        'Trần Thị Khách 2',
-        '0987654322',
-        'k2@gmail.com'
-    ),
-    (
-        3,
-        'Lê Văn Khách 3',
-        '0987654323',
-        'k3@gmail.com'
-    ),
-    (
-        4,
-        'Phạm Thị Khách 4',
-        '0987654324',
-        'k4@gmail.com'
-    ),
-    (
-        5,
-        'Hoàng Văn Khách 5',
-        '0987654325',
-        'k5@gmail.com'
-    ),
-    (
-        6,
-        'Đỗ Thị Khách 6',
-        '0987654326',
-        'k6@gmail.com'
-    ),
-    (
-        7,
-        'Vũ Văn Khách 7',
-        '0987654327',
-        'k7@gmail.com'
-    ),
-    (
-        8,
-        'Ngô Thị Khách 8',
-        '0987654328',
-        'k8@gmail.com'
-    ),
-    (
-        9,
-        'Dương Văn Khách 9',
-        '0987654329',
-        'k9@gmail.com'
-    ),
-    (
-        10,
-        'Lý Thị Khách 10',
-        '0987654330',
-        'k10@gmail.com'
-    );
-
------------------------------------------------------------
--- 5. TẠO PHÒNG (30 phòng, 5 tầng)
------------------------------------------------------------
+-- 10 Nhân viên (Sinh tự động)
 DO $$
-DECLARE
-    tang INT;
+DECLARE 
+    i INT;
+    v_sdt VARCHAR;
+    v_email VARCHAR;
 BEGIN
-    FOR tang IN 1..5 LOOP
-        -- 1 Phòng VIP mỗi tầng
-        INSERT INTO a_phong (soPhong, maLoaiPhong, trangThai) 
-        VALUES ('V' || tang || '01', 3, 'Trống');
-
-        -- 2 Phòng Premium mỗi tầng
-        INSERT INTO a_phong (soPhong, maLoaiPhong, trangThai) 
-        VALUES ('P' || tang || '01', 2, 'Trống'),
-               ('P' || tang || '02', 2, 'Trống');
-
-        -- 3 Phòng Luxury mỗi tầng
-        INSERT INTO a_phong (soPhong, maLoaiPhong, trangThai) 
-        VALUES ('L' || tang || '01', 1, 'Trống'),
-               ('L' || tang || '02', 1, 'Trống'),
-               ('L' || tang || '03', 1, 'Trống');
-    END LOOP;
-END $$;
-
------------------------------------------------------------
--- 6. THIẾT BỊ TRONG PHÒNG
------------------------------------------------------------
-DO $$
-DECLARE
-    r RECORD;
-BEGIN
-    FOR r IN SELECT maPhong FROM a_phong LOOP
-        -- Thiết bị 1, 3, 5 (TV, Điều hòa, Giường) có ở tất cả các phòng
-        INSERT INTO b_thietbiphong (maPhong, maThietBi, soLuong, trangThai) VALUES (r.maPhong, 1, 1, 'Tốt');
-        INSERT INTO b_thietbiphong (maPhong, maThietBi, soLuong, trangThai) VALUES (r.maPhong, 3, 1, 'Tốt');
-        INSERT INTO b_thietbiphong (maPhong, maThietBi, soLuong, trangThai) VALUES (r.maPhong, 5, 1, 'Tốt');
-
-        -- Random thêm dựa trên ID phòng chẵn lẻ để tạo sự khác biệt
-        IF r.maPhong % 2 = 0 THEN
-            INSERT INTO b_thietbiphong (maPhong, maThietBi, soLuong, trangThai) VALUES (r.maPhong, 2, 1, 'Tốt'); -- Tủ lạnh
-            INSERT INTO b_thietbiphong (maPhong, maThietBi, soLuong, trangThai) VALUES (r.maPhong, 7, 1, 'Tốt'); -- Bàn
-        ELSE
-            INSERT INTO b_thietbiphong (maPhong, maThietBi, soLuong, trangThai) VALUES (r.maPhong, 4, 2, 'Tốt'); -- Máy sấy (2 cái)
-            INSERT INTO b_thietbiphong (maPhong, maThietBi, soLuong, trangThai) VALUES (r.maPhong, 6, 1, 'Tốt'); -- Sofa
-        END IF;
+    FOR i IN 2..11 LOOP
+        v_sdt := '0912000' || lpad(i::text, 3, '0');
+        v_email := 'nhanvien' || i || '@hotel.com';
         
-        -- Phòng VIP (Sophong có chữ 'V') thêm Bồn tắm
-        IF EXISTS (SELECT 1 FROM a_phong WHERE maPhong = r.maPhong AND soPhong LIKE 'V%') THEN
-             INSERT INTO b_thietbiphong (maPhong, maThietBi, soLuong, trangThai) VALUES (r.maPhong, 10, 1, 'Tốt');
-        END IF;
+        -- Thêm Nhân viên
+        INSERT INTO y_nhanvien (maNhanVien, tenNhanVien, soDienThoai, email)
+        VALUES (i, 'Trần Nhân Viên ' || (i-1), v_sdt, v_email);
+        
+        -- Thêm Tài khoản (Tài khoản = email, Mật khẩu = SĐT)
+        INSERT INTO y_taikhoan (id, taiKhoan, matKhau, maNhanVien, maVaiTro)
+        VALUES (i, v_email, v_sdt, i, 2);
     END LOOP;
 END $$;
 
 -----------------------------------------------------------
--- 7. HÓA ĐƠN & ĐẶT PHÒNG & KIỂM TRA
+-- 4. KHÁCH HÀNG (30 Khách hàng)
 -----------------------------------------------------------
--- Khách 1, HD1
-INSERT INTO
-    z_hoadon (
-        maHoaDon,
-        maNhanVien,
-        maKhachHang,
-        ngayTao,
-        ngayThanhToan,
-        tongTien,
-        trangThai
-    )
-VALUES (
-        1,
-        2,
-        1,
-        '2023-09-05 10:00:00',
-        '2023-09-07 12:00:00',
-        0,
-        'Đã thanh toán'
-    );
-
-INSERT INTO
-    a_datphong (
-        maDatPhong,
-        maHoaDon,
-        maNhanVien,
-        maPhong,
-        ngayDatPhong,
-        ngayNhanPhong,
-        ngayHenTra,
-        ngayTraPhong,
-        ngayThanhToan,
-        tienPhong,
-        tienPhat
-    )
-SELECT 1, 1, 2, maPhong, '2023-09-01 08:00:00', '2023-09-05 12:00:00', '2023-09-07 12:00:00', '2023-09-07 12:00:00', '2023-09-07 12:00:00', 14400000, 0
-FROM a_phong
-WHERE
-    soPhong = 'V101';
-
-INSERT INTO
-    b_kiemtraphong (
-        maKiemTraPhong,
-        maHoaDon,
-        maPhong,
-        ngayThanhToan,
-        tienBoiThuong
-    )
-SELECT 1, 1, maPhong, '2023-09-07 12:00:00', 0
-FROM a_phong
-WHERE
-    soPhong = 'V101';
-
--- Khách 1, HD1, Room 2
-INSERT INTO
-    a_datphong (
-        maDatPhong,
-        maHoaDon,
-        maNhanVien,
-        maPhong,
-        ngayDatPhong,
-        ngayNhanPhong,
-        ngayHenTra,
-        ngayTraPhong,
-        ngayThanhToan,
-        tienPhong,
-        tienPhat
-    )
-SELECT 2, 1, 2, maPhong, '2023-09-01 08:00:00', '2023-09-05 12:00:00', '2023-09-07 12:00:00', '2023-09-07 12:00:00', '2023-09-07 12:00:00', 3840000, 0
-FROM a_phong
-WHERE
-    soPhong = 'L101';
-
-INSERT INTO
-    b_kiemtraphong (
-        maKiemTraPhong,
-        maHoaDon,
-        maPhong,
-        ngayThanhToan,
-        tienBoiThuong
-    )
-SELECT 2, 1, maPhong, '2023-09-07 12:00:00', 200000
-FROM a_phong
-WHERE
-    soPhong = 'L101';
-
-INSERT INTO
-    b_kiemtrachitiet (
-        maNhanVien,
-        maKiemTraPhong,
-        maThietBiPhong,
-        soLuongBiHong,
-        ghiChu
-    )
-SELECT 4, 2, tp.maThietBiPhong, 1, 'Làm vỡ vỏ máy'
-FROM b_thietbiphong tp
-    JOIN a_phong p ON tp.maPhong = p.maPhong
-WHERE
-    p.soPhong = 'L101'
-    AND tp.maThietBi = 4;
-
--- HD2
-INSERT INTO
-    z_hoadon (
-        maHoaDon,
-        maNhanVien,
-        maKhachHang,
-        ngayTao,
-        ngayThanhToan,
-        tongTien,
-        trangThai
-    )
-VALUES (
-        2,
-        3,
-        1,
-        '2023-10-10 14:00:00',
-        '2023-10-11 14:00:00',
-        0,
-        'Đã thanh toán'
-    );
-
-INSERT INTO
-    a_datphong (
-        maDatPhong,
-        maHoaDon,
-        maNhanVien,
-        maPhong,
-        ngayDatPhong,
-        ngayNhanPhong,
-        ngayHenTra,
-        ngayTraPhong,
-        ngayThanhToan,
-        tienPhong,
-        tienPhat
-    )
-SELECT 3, 2, 3, maPhong, '2023-10-01 09:00:00', '2023-10-10 14:00:00', '2023-10-11 12:00:00', '2023-10-11 14:00:00', '2023-10-11 14:00:00', 3960000, 468000
-FROM a_phong
-WHERE
-    soPhong = 'P201';
-
-INSERT INTO
-    b_kiemtraphong (
-        maKiemTraPhong,
-        maHoaDon,
-        maPhong,
-        ngayThanhToan,
-        tienBoiThuong
-    )
-SELECT 3, 2, maPhong, '2023-10-11 14:00:00', 0
-FROM a_phong
-WHERE
-    soPhong = 'P201';
-
--- Khách 1, HD3
-INSERT INTO
-    z_hoadon (
-        maHoaDon,
-        maNhanVien,
-        maKhachHang,
-        ngayTao,
-        ngayThanhToan,
-        tongTien,
-        trangThai
-    )
-VALUES (
-        3,
-        2,
-        1,
-        '2023-11-01 12:00:00',
-        '2023-11-02 12:00:00',
-        0,
-        'Đã thanh toán'
-    );
-
-INSERT INTO
-    a_datphong (
-        maDatPhong,
-        maHoaDon,
-        maNhanVien,
-        maPhong,
-        ngayDatPhong,
-        ngayNhanPhong,
-        ngayHenTra,
-        ngayTraPhong,
-        ngayThanhToan,
-        tienPhong,
-        tienPhat
-    )
-SELECT 4, 3, 2, maPhong, '2023-11-01 10:00:00', '2023-11-01 12:00:00', '2023-11-02 12:00:00', '2023-11-02 12:00:00', '2023-11-02 12:00:00', 1920000, 0
-FROM a_phong
-WHERE
-    soPhong = 'L301';
-
-INSERT INTO
-    b_kiemtraphong (
-        maKiemTraPhong,
-        maHoaDon,
-        maPhong,
-        ngayThanhToan,
-        tienBoiThuong
-    )
-SELECT 4, 3, maPhong, '2023-11-02 12:00:00', 0
-FROM a_phong
-WHERE
-    soPhong = 'L301';
+DO $$
+DECLARE 
+    i INT;
+BEGIN
+    FOR i IN 1..30 LOOP
+        INSERT INTO x_khachhang (maKhachHang, tenKhachHang, soDienThoai, email)
+        VALUES (
+            i, 
+            'Khách hàng thứ ' || i, 
+            '0988000' || lpad(i::text, 3, '0'), 
+            'khachhang' || i || '@gmail.com'
+        );
+    END LOOP;
+END $$;
 
 -----------------------------------------------------------
--- 8. CẬP NHẬT TỔNG TIỀN HÓA ĐƠN
+-- 5. TẠO PHÒNG (9 Tầng, mỗi tầng 9 phòng)
 -----------------------------------------------------------
+-- Quy ước: 3 phòng đầu Standard (S), 3 phòng giữa Luxury (L), 3 phòng cuối VIP (V)
+DO $$
+DECLARE
+    f INT; -- Tầng (Floor)
+    r INT; -- Phòng (Room)
+    v_loai INT;
+    v_prefix VARCHAR(1);
+    v_soPhong VARCHAR(10);
+BEGIN
+    FOR f IN 1..9 LOOP
+        FOR r IN 1..9 LOOP
+            IF r <= 3 THEN 
+                v_loai := 1; v_prefix := 'S'; -- Standard
+            ELSIF r <= 6 THEN 
+                v_loai := 2; v_prefix := 'L'; -- Luxury
+            ELSE 
+                v_loai := 3; v_prefix := 'V'; -- VIP
+            END IF;
+            
+            -- Định dạng số phòng: Ký tự + 2 số tầng + 2 số phòng (VD: N0102)
+            v_soPhong := v_prefix || lpad(f::text, 2, '0') || lpad(r::text, 2, '0');
+            
+            INSERT INTO a_phong (soPhong, maLoaiPhong, trangThai) 
+            VALUES (v_soPhong, v_loai, 'Trống');
+        END LOOP;
+    END LOOP;
+END $$;
+
+-----------------------------------------------------------
+-- 6. HOÁ ĐƠN & ĐẶT PHÒNG (50 Hoá đơn, logic thời gian phức tạp)
+-----------------------------------------------------------
+DO $$
+DECLARE
+    i INT; j INT;
+    v_maKhach INT; v_maNV INT;
+    v_ngayTao TIMESTAMP;
+    v_ngayThanhToan_calc TIMESTAMP;
+    v_ngayThanhToan_real TIMESTAMP;
+    v_trangThaiHD VARCHAR;
+    v_soLuongPhong INT;
+    v_maPhong INT; v_giaCoBan DECIMAL;
+    v_ngayHenTra TIMESTAMP;
+    v_ngayTra_calc TIMESTAMP;
+    v_ngayTra_real TIMESTAMP;
+    v_tienPhong DECIMAL;
+    
+    -- Lấy thời điểm hiện tại làm mốc so sánh
+    v_now TIMESTAMP := CURRENT_TIMESTAMP; 
+    -- Khởi tạo mốc thời gian ngày tạo hoá đơn đầu tiên là 30 ngày trước
+    v_ngayTao_base TIMESTAMP := CURRENT_TIMESTAMP - interval '30 days';
+BEGIN
+    FOR i IN 1..50 LOOP
+        -- Phân bổ đều khách hàng (30 khách, ai cũng có ít nhất 1, vài người 2)
+        v_maKhach := (i % 30) + 1;
+        
+        -- Phân bổ đều nhân viên (11 nhân viên, ai cũng từng lập hoá đơn)
+        v_maNV := (i % 11) + 1;
+        
+        -- Ngày tạo: Đồng biến với ID. Hoá đơn sau có ngày tạo trễ hơn.
+        -- Với 50 hoá đơn rải đều trong 30 ngày, trung bình mỗi hoá đơn cách nhau ~14 giờ.
+        -- Thêm một lượng thời gian ngẫu nhiên từ 0-10 giờ để đảm bảo không trùng lặp và tính tự nhiên.
+        v_ngayTao := v_ngayTao_base + ((i - 1) * 14 + random() * 10 || ' hours')::interval;
+        
+        -- Thời gian thanh toán dự kiến: 2 đến 5 ngày sau khi tạo
+        v_ngayThanhToan_calc := v_ngayTao + ((random() * 3 + 2) || ' days')::interval;
+        
+        -- Xử lý logic chưa thanh toán nếu vượt quá thời gian hiện tại
+        IF v_ngayThanhToan_calc > v_now THEN
+            v_ngayThanhToan_real := NULL;
+            v_trangThaiHD := 'Chưa thanh toán';
+        ELSE
+            v_ngayThanhToan_real := v_ngayThanhToan_calc;
+            v_trangThaiHD := 'Đã thanh toán';
+        END IF;
+
+        -- Tạo Hoá Đơn
+        INSERT INTO z_hoadon (maHoaDon, maNhanVien, maKhachHang, ngayTao, ngayThanhToan, tongTien, trangThai)
+        VALUES (i, v_maNV, v_maKhach, v_ngayTao, v_ngayThanhToan_real, 0, v_trangThaiHD);
+
+        -- Sinh từ 1 đến 5 phòng cho mỗi hoá đơn
+        v_soLuongPhong := floor(random() * 5 + 1)::INT;
+        
+        FOR j IN 1..v_soLuongPhong LOOP
+            -- Chọn ngẫu nhiên 1 phòng
+            SELECT p.maPhong, l.giaCoBan INTO v_maPhong, v_giaCoBan
+            FROM a_phong p JOIN a_loaiphong l ON p.maLoaiPhong = l.maLoaiPhong
+            ORDER BY random() LIMIT 1;
+            
+            -- Hẹn trả: sớm hơn 1 ngày cho đến bằng với thời gian thanh toán
+            v_ngayHenTra := v_ngayThanhToan_calc - (random() * 1 || ' days')::interval;
+            
+            -- Ngày trả phòng thực tế dự kiến: Giữa ngày nhận và ngày thanh toán
+            v_ngayTra_calc := v_ngayTao + (random() * EXTRACT(EPOCH FROM (v_ngayThanhToan_calc - v_ngayTao)) * interval '1 second');
+            
+            -- Xử lý logic phòng chưa trả
+            IF v_ngayTra_calc > v_now THEN
+                v_ngayTra_real := NULL;
+            ELSE
+                v_ngayTra_real := v_ngayTra_calc;
+            END IF;
+
+            -- Tính tiền phòng tạm (theo giờ)
+            IF v_ngayTra_real IS NOT NULL THEN
+                v_tienPhong := (EXTRACT(EPOCH FROM (v_ngayTra_real - v_ngayTao)) / 3600.0) * v_giaCoBan;
+            ELSE
+                -- Nếu chưa trả thì tính đến thời điểm hiện tại
+                v_tienPhong := (EXTRACT(EPOCH FROM (v_now - v_ngayTao)) / 3600.0) * v_giaCoBan;
+            END IF;
+
+            -- Thêm chi tiết đặt phòng (Đảm bảo mã nhân viên trùng với hoá đơn)
+            INSERT INTO a_datphong (
+                maHoaDon, maNhanVien, maPhong, 
+                ngayDatPhong, ngayNhanPhong, ngayHenTra, ngayTraPhong, ngayThanhToan, 
+                tienPhong, tienPhat
+            )
+            VALUES (
+                i, v_maNV, v_maPhong, 
+                v_ngayTao - interval '1 day', -- Cho ngày đặt sớm hơn 1 ngày
+                v_ngayTao, v_ngayHenTra, v_ngayTra_real, v_ngayThanhToan_real, 
+                v_tienPhong, 0
+            );
+        END LOOP;
+    END LOOP;
+END $$;
+
+-----------------------------------------------------------
+-- 7. CẬP NHẬT DỮ LIỆU CUỐI CÙNG (TỔNG TIỀN & TRẠNG THÁI PHÒNG)
+-----------------------------------------------------------
+-- Cập nhật tổng tiền Hoá đơn
 UPDATE z_hoadon
 SET
     tongTien = (
@@ -485,23 +244,92 @@ SET
         FROM a_datphong dp
         WHERE
             dp.maHoaDon = z_hoadon.maHoaDon
-    ) + (
-        SELECT COALESCE(SUM(kt.tienBoiThuong), 0)
-        FROM b_kiemtraphong kt
-        WHERE
-            kt.maHoaDon = z_hoadon.maHoaDon
     );
 
--- Update sequences
-SELECT setval(pg_get_serial_sequence('y_vaitro', 'mavaitro'), COALESCE((SELECT MAX(maVaiTro) FROM y_vaitro), 1));
-SELECT setval(pg_get_serial_sequence('a_loaiphong', 'maloaiphong'), COALESCE((SELECT MAX(maLoaiPhong) FROM a_loaiphong), 1));
-SELECT setval(pg_get_serial_sequence('b_thietbi', 'mathietbi'), COALESCE((SELECT MAX(maThietBi) FROM b_thietbi), 1));
-SELECT setval(pg_get_serial_sequence('y_nhanvien', 'manhanvien'), COALESCE((SELECT MAX(maNhanVien) FROM y_nhanvien), 1));
-SELECT setval(pg_get_serial_sequence('y_taikhoan', 'id'), COALESCE((SELECT MAX(id) FROM y_taikhoan), 1));
-SELECT setval(pg_get_serial_sequence('x_khachhang', 'makhachhang'), COALESCE((SELECT MAX(maKhachHang) FROM x_khachhang), 1));
-SELECT setval(pg_get_serial_sequence('a_phong', 'maphong'), COALESCE((SELECT MAX(maPhong) FROM a_phong), 1));
-SELECT setval(pg_get_serial_sequence('b_thietbiphong', 'mathietbiphong'), COALESCE((SELECT MAX(maThietBiPhong) FROM b_thietbiphong), 1));
-SELECT setval(pg_get_serial_sequence('z_hoadon', 'mahoadon'), COALESCE((SELECT MAX(maHoaDon) FROM z_hoadon), 1));
-SELECT setval(pg_get_serial_sequence('a_datphong', 'madatphong'), COALESCE((SELECT MAX(maDatPhong) FROM a_datphong), 1));
-SELECT setval(pg_get_serial_sequence('b_kiemtraphong', 'makiemtraphong'), COALESCE((SELECT MAX(maKiemTraPhong) FROM b_kiemtraphong), 1));
-SELECT setval(pg_get_serial_sequence('b_kiemtrachitiet', 'makiemtrachitiet'), COALESCE((SELECT MAX(maKiemTraChiTiet) FROM b_kiemtrachitiet), 1));
+-- Cập nhật trạng thái "Đang thuê" cho những phòng có lịch đặt chưa trả
+UPDATE a_phong
+SET
+    trangThai = 'Đang thuê'
+WHERE
+    maPhong IN (
+        SELECT DISTINCT
+            maPhong
+        FROM a_datphong
+        WHERE
+            ngayTraPhong IS NULL
+    );
+
+-----------------------------------------------------------
+-- 8. ĐỒNG BỘ LẠI CÁC SEQUENCE CỦA POSTGRESQL
+-----------------------------------------------------------
+SELECT setval(
+        pg_get_serial_sequence('y_vaitro', 'mavaitro'), COALESCE(
+            (
+                SELECT MAX(maVaiTro)
+                FROM y_vaitro
+            ), 1
+        )
+    );
+
+SELECT setval(
+        pg_get_serial_sequence('a_loaiphong', 'maloaiphong'), COALESCE(
+            (
+                SELECT MAX(maLoaiPhong)
+                FROM a_loaiphong
+            ), 1
+        )
+    );
+
+SELECT setval(
+        pg_get_serial_sequence('y_nhanvien', 'manhanvien'), COALESCE(
+            (
+                SELECT MAX(maNhanVien)
+                FROM y_nhanvien
+            ), 1
+        )
+    );
+
+SELECT setval(
+        pg_get_serial_sequence('y_taikhoan', 'id'), COALESCE(
+            (
+                SELECT MAX(id)
+                FROM y_taikhoan
+            ), 1
+        )
+    );
+
+SELECT setval(
+        pg_get_serial_sequence('x_khachhang', 'makhachhang'), COALESCE(
+            (
+                SELECT MAX(maKhachHang)
+                FROM x_khachhang
+            ), 1
+        )
+    );
+
+SELECT setval(
+        pg_get_serial_sequence('a_phong', 'maphong'), COALESCE(
+            (
+                SELECT MAX(maPhong)
+                FROM a_phong
+            ), 1
+        )
+    );
+
+SELECT setval(
+        pg_get_serial_sequence('z_hoadon', 'mahoadon'), COALESCE(
+            (
+                SELECT MAX(maHoaDon)
+                FROM z_hoadon
+            ), 1
+        )
+    );
+
+SELECT setval(
+        pg_get_serial_sequence('a_datphong', 'madatphong'), COALESCE(
+            (
+                SELECT MAX(maDatPhong)
+                FROM a_datphong
+            ), 1
+        )
+    );
