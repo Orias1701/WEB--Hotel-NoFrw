@@ -30,18 +30,14 @@ public class DeletionCheckService {
                     break;
                 case "phong":
                     sql = "SELECT COUNT(*) FROM a_datphong WHERE maPhong = ?";
-
+                    break;
                 case "hoadon":
-                    // Cascade deletes in DatPhong & KiemTraPhong if we delete HoaDon? 
-                    // Wait, actually the HoaDao delete throws exception if there are dependencies
-                    // But in DatPhongServlet, deleting datphong deletes hoadon.
                     sql = "SELECT COUNT(*) FROM a_datphong WHERE maHoaDon = ?";
                     break;
                 case "datphong":
-                    // DatPhong can be deleted if HoaDon is not "Đã thanh toán"
-                    // But maybe just let it be true and backend check fails
                     return true;
-
+                default:
+                    return true;
             }
             if (!sql.isEmpty() && sql.contains("?")) {
                 return executeCount(con, sql, id) == 0;

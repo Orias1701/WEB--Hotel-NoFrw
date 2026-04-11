@@ -33,11 +33,21 @@ public class NhanVienService {
     public boolean delete(int id) { return nvDao.delete(id); }
     
     public List<NhanVien> getAll() { 
-        List<NhanVien> list = nvDao.getAll();
-        for (NhanVien nv : list) {
-            nv.setListTaiKhoan(tkDao.getByMaNhanVien(nv.getMaNhanVien()));
+        List<NhanVien> listNhanVien = nvDao.getAll();
+        List<TaiKhoan> listAllTaiKhoan = tkDao.getAll();
+        
+        // Group accounts by employee ID for fast lookup
+        java.util.Map<Integer, List<TaiKhoan>> group = new java.util.HashMap<>();
+        for (TaiKhoan tk : listAllTaiKhoan) {
+            group.computeIfAbsent(tk.getMaNhanVien(), k -> new java.util.ArrayList<>()).add(tk);
         }
-        return list; 
+        
+        // Match accounts to employees in memory
+        for (NhanVien nv : listNhanVien) {
+            nv.setListTaiKhoan(group.getOrDefault(nv.getMaNhanVien(), new java.util.ArrayList<>()));
+        }
+        
+        return listNhanVien; 
     }
     
     public NhanVien getById(int id) { 
