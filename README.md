@@ -7,19 +7,16 @@ Dự án này đã được chuyển đổi từ ứng dụng Desktop (Java Swin
 ```
 APP--Hotel-NoRest/
 ├─ src/
-│  ├─ config/           # Cấu hình kết nối DB (DBConnection.java)
-│  ├─ controller/       # Các thực thể dữ liệu (POJO)
-│  ├─ exception/        # Lớp Dao (Truy xuất dữ liệu JDBC)
-│  ├─ model/            # Các thực thể dữ liệu (POJO)
-│  ├─ repository/       # Lớp Dao (Truy xuất dữ liệu JDBC)
-│  ├─ resources/        # Lớp Dao (Truy xuất dữ liệu JDBC)
-│  ├─ service/          # Lớp Xử lý nghiệp vụ (Business Logic)
-│  ├─ servlet/          # Lớp Điều phối Web (Controllers)
-│  ├─ util/             # Lớp Điều phối Web (Controllers)
-│  ├─ view/             # Lớp Điều phối Web (Controllers)
-│  └─ web/              # Tài nguyên frontend
-├─ pom.xml              # Cấu hình Maven (Dependencies: Jetty, Postgres, Dotenv)
-└─ .env                 # Biến môi trường (DB Credentials)
+│  ├─ config/
+│  ├─ controller/
+│  ├─ model/
+│  ├─ repository/
+│  ├─ service/
+│  ├─ servlet/
+│  ├─ util/
+│  └─ web/
+├─ pom.xml
+└─ .env
 ```
 
 ## 2. Công nghệ Sử dụng
@@ -31,6 +28,10 @@ APP--Hotel-NoRest/
 - **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6).
 
 ## 3. Hướng dẫn Cài đặt & Khởi chạy
+
+```
+mvn clean compile jetty:run
+```
 
 ### Bước 1: Cấu hình Cơ sở dữ liệu
 
