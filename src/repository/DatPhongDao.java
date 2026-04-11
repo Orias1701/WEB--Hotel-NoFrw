@@ -16,11 +16,12 @@ public class DatPhongDao {
         List<DatPhong> list = new ArrayList<>();
 
         String sql = """
-            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong 
+            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong, nv.tenNhanVien
             FROM a_datphong dp
             JOIN z_hoadon hd ON dp.maHoaDon = hd.maHoaDon
             JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
             JOIN a_phong p ON dp.maPhong = p.maPhong
+            JOIN y_nhanvien nv ON dp.maNhanVien = nv.maNhanVien
             ORDER BY dp.maDatPhong DESC
         """;
 
@@ -46,6 +47,7 @@ public class DatPhongDao {
                 dp.setTenKhachHang(rs.getString("tenKhachHang"));
                 dp.setMaKhachHang(rs.getInt("maKhachHang"));
                 dp.setSoPhong(rs.getString("soPhong"));
+                dp.setTenNhanVien(rs.getString("tenNhanVien"));
                 list.add(dp);
             }
 
@@ -58,11 +60,12 @@ public class DatPhongDao {
     // GET BY ID
     public DatPhong getById(int id) {
         String sql = """
-            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong 
+            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong, nv.tenNhanVien
             FROM a_datphong dp
             JOIN z_hoadon hd ON dp.maHoaDon = hd.maHoaDon
             JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
             JOIN a_phong p ON dp.maPhong = p.maPhong
+            JOIN y_nhanvien nv ON dp.maNhanVien = nv.maNhanVien
             WHERE dp.maDatPhong = ?
         """;
 
@@ -87,6 +90,7 @@ public class DatPhongDao {
                     dp.setTenKhachHang(rs.getString("tenKhachHang"));
                     dp.setMaKhachHang(rs.getInt("maKhachHang"));
                     dp.setSoPhong(rs.getString("soPhong"));
+                    dp.setTenNhanVien(rs.getString("tenNhanVien"));
                     return dp;
                 }
             }
@@ -102,11 +106,12 @@ public class DatPhongDao {
     public List<DatPhong> getAllByMaHoaDon(int maHoaDon) {
         List<DatPhong> list = new ArrayList<>();
         String sql = """
-            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong 
+            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong, nv.tenNhanVien
             FROM a_datphong dp
             JOIN z_hoadon hd ON dp.maHoaDon = hd.maHoaDon
             JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
             JOIN a_phong p ON dp.maPhong = p.maPhong
+            JOIN y_nhanvien nv ON dp.maNhanVien = nv.maNhanVien
             WHERE dp.maHoaDon = ?
         """;
 
@@ -130,6 +135,7 @@ public class DatPhongDao {
                     dp.setTenKhachHang(rs.getString("tenKhachHang"));
                     dp.setMaKhachHang(rs.getInt("maKhachHang"));
                     dp.setSoPhong(rs.getString("soPhong"));
+                    dp.setTenNhanVien(rs.getString("tenNhanVien"));
                     list.add(dp);
                 }
             }

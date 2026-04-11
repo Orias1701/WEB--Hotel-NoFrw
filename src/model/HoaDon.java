@@ -14,9 +14,13 @@ public class HoaDon {
     private String trangThai;
 
     private String tenKhachHang;
+    private String tenNhanVien;
 
     public String getTenKhachHang() { return tenKhachHang; }
     public void setTenKhachHang(String ten) { this.tenKhachHang = ten; }
+
+    public String getTenNhanVien() { return tenNhanVien; }
+    public void setTenNhanVien(String ten) { this.tenNhanVien = ten; }
 
     public HoaDon() {
     }

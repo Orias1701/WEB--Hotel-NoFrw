@@ -15,12 +15,12 @@ import model.DatPhong;
 import model.HoaDon;
 import model.LoaiPhong;
 import model.TaiKhoan;
-import model.KiemTraPhong;
+
 import service.DatPhongService;
 import service.KhachHangService;
 import service.PhongService;
 import service.HoaDonService;
-import service.KiemTraPhongService;
+
 import util.DatPhongUtils;
 
 @WebServlet("/dat-phong-data")
@@ -31,7 +31,7 @@ public class DatPhongServlet extends HttpServlet {
     private KhachHangService khachHangService = new KhachHangService();
     private PhongService phongService = new PhongService();
     private HoaDonService hoaDonService = new HoaDonService();
-    private KiemTraPhongService ktPhongService = new KiemTraPhongService();
+
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -74,34 +74,41 @@ public class DatPhongServlet extends HttpServlet {
 
     private void doAdd(HttpServletRequest request, TaiKhoan userLogin) throws Exception {
         int maKhachHang = Integer.parseInt(request.getParameter("maKhachHang"));
-        int maPhong = Integer.parseInt(request.getParameter("maPhong"));
+        String[] maPhongArr = request.getParameterValues("maPhong");
+        
+        if (maPhongArr == null || maPhongArr.length == 0) {
+            throw new Exception("Vui lòng chọn ít nhất một phòng.");
+        }
         
         // Parse date-time inputs (Format: yyyy-MM-ddTHH:mm)
         Timestamp ngayNhan = Timestamp.valueOf(request.getParameter("ngayNhan").replace("T", " ") + ":00");
         Timestamp ngayHenTra = Timestamp.valueOf(request.getParameter("ngayHenTra").replace("T", " ") + ":00");
 
-        LoaiPhong lp = phongService.getLoaiPhongByPhong(maPhong);
-        BigDecimal giaNgay = lp.getGiaCoBan();
-
-        BigDecimal tienPhong = DatPhongUtils.tinhTienPhong(ngayNhan, ngayHenTra, giaNgay);
-
-        // 1. Create Invoice
+        // 1. Create ONE shared Invoice for all rooms in this booking session
         HoaDon hd = new HoaDon(0, userLogin.getMaNhanVien(), maKhachHang,
                 new Timestamp(System.currentTimeMillis()), null, BigDecimal.ZERO, "Chưa thanh toán");
 
         int maHoaDon = hoaDonService.create(hd);
         
-        // 2. Create Booking
-        DatPhong d = new DatPhong(
-                0, maHoaDon, userLogin.getMaNhanVien(), maPhong,
-                new Timestamp(System.currentTimeMillis()),
-                ngayNhan, ngayHenTra,
-                null, null,
-                tienPhong,
-                BigDecimal.ZERO);
+        // 2. Create Bookings for each selected room
+        for (String maPhongStr : maPhongArr) {
+            int maPhong = Integer.parseInt(maPhongStr);
+            
+            LoaiPhong lp = phongService.getLoaiPhongByPhong(maPhong);
+            BigDecimal giaGio = lp.getGiaCoBan();
+            BigDecimal tienPhong = DatPhongUtils.tinhTienPhong(ngayNhan, ngayHenTra, giaGio);
 
-        if (datPhongService.add(d)) {
-            phongService.updateStatus(maPhong, "Đang ở");
+            DatPhong d = new DatPhong(
+                    0, maHoaDon, userLogin.getMaNhanVien(), maPhong,
+                    new Timestamp(System.currentTimeMillis()),
+                    ngayNhan, ngayHenTra,
+                    null, null,
+                    tienPhong,
+                    BigDecimal.ZERO);
+
+            if (datPhongService.add(d)) {
+                phongService.updateStatus(maPhong, "Đang ở");
+            }
         }
     }
 
@@ -114,20 +121,17 @@ public class DatPhongServlet extends HttpServlet {
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
         LoaiPhong lp = phongService.getLoaiPhongByPhong(dp.getMaPhong());
-        BigDecimal giaNgay = lp.getGiaCoBan();
+        BigDecimal giaGio = lp.getGiaCoBan();
 
         BigDecimal tienPhong = dp.getTienPhong() != null ? dp.getTienPhong() : BigDecimal.ZERO;
-        BigDecimal tienPhat = DatPhongUtils.tinhPhatTheoGio(dp.getNgayHenTra(), now, giaNgay);
-
-        KiemTraPhong kt = ktPhongService.getByMaHoaDon(dp.getMaHoaDon());
-        BigDecimal tienBoiThuong = kt != null && kt.getTienBoiThuong() != null ? kt.getTienBoiThuong() : BigDecimal.ZERO;
+        BigDecimal tienPhat = DatPhongUtils.tinhPhatTheoGio(dp.getNgayHenTra(), now, giaGio);
 
         if (datPhongService.traPhong(id, now, tienPhong, tienPhat)) {
-            BigDecimal tongTien = tienPhong.add(tienPhat).add(tienBoiThuong);
+            BigDecimal tongTien = tienPhong.add(tienPhat);
 
             hd.setTongTien(tongTien);
-            hd.setTrangThai("Đã thanh toán");
-            hd.setNgayThanhToan(now);
+            // hd.setTrangThai("Đã thanh toán"); // REMOVED: Decouple
+            // hd.setNgayThanhToan(now);         // REMOVED: Decouple
             hoaDonService.update(hd);
 
             phongService.updateStatus(dp.getMaPhong(), "Trống");

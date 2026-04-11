@@ -32,6 +32,10 @@ APP--Hotel-NoRest/
 
 ## 3. Hướng dẫn Cài đặt & Khởi chạy
 
+```
+mvn clean compile jetty:run
+```
+
 ### Bước 1: Cấu hình Cơ sở dữ liệu
 
 Tạo file `.env` tại thư mục gốc của dự án với nội dung sau:

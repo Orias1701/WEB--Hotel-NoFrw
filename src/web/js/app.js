@@ -1,9 +1,23 @@
 /**
+ * Track the current active request to prevent race conditions
+ */
+let currentAbortController = null;
+
+/**
  * Core AJAX Navigation Logic
  * Replicates the 'Panel Swapping' behavior of FrmMain.java
  */
 function loadModule(moduleName, title) {
     console.log(`Loading module: ${moduleName}`);
+
+    // If there's a pending request, cancel it
+    if (currentAbortController) {
+        currentAbortController.abort();
+    }
+
+    // Create a new controller for the current request
+    currentAbortController = new AbortController();
+    const { signal } = currentAbortController;
 
     // Update active state in sidebar
     const navItems = document.querySelectorAll('.nav-item');
@@ -19,7 +33,8 @@ function loadModule(moduleName, title) {
 
     // AJAX request to MainServlet
     fetch(`main?view=${moduleName}`, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        signal: signal
     })
         .then(response => {
             if (!response.ok) throw new Error('Network response was not ok');
@@ -51,6 +66,9 @@ function loadModule(moduleName, title) {
             });
         })
         .catch(error => {
+            // Ignore abort errors
+            if (error.name === 'AbortError') return;
+
             console.error('Error loading module:', error);
             document.getElementById('content-area').innerHTML = `
                 <div style="padding: 25px; color: var(--color-danger);">

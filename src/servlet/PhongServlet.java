@@ -55,7 +55,11 @@ public class PhongServlet extends HttpServlet {
                 phongService.update(p);
             } else if ("delete".equals(action)) {
                 int maPhong = Integer.parseInt(request.getParameter("maPhong"));
-                phongService.delete(maPhong);
+                if (new service.DeletionCheckService().canDelete("phong", maPhong)) {
+                    phongService.delete(maPhong);
+                } else {
+                    System.out.println("⚠️ Chặn xóa Phòng #" + maPhong + " do có ràng buộc dữ liệu.");
+                }
             }
             
             // Redirect back to main?view=phong to refresh (handled by AJAX or full reload)

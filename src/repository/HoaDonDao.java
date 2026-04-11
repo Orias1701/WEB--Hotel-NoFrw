@@ -16,9 +16,10 @@ public class HoaDonDao {
         List<HoaDon> list = new ArrayList<>();
 
         String sql = """
-            SELECT hd.*, kh.tenKhachHang 
+            SELECT hd.*, kh.tenKhachHang, nv.tenNhanVien
             FROM z_hoadon hd
             JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
+            JOIN y_nhanvien nv ON hd.maNhanVien = nv.maNhanVien
             ORDER BY hd.maHoaDon DESC
         """;
 
@@ -35,6 +36,7 @@ public class HoaDonDao {
                         rs.getBigDecimal("tongTien"),
                         rs.getString("trangThai"));
                 hd.setTenKhachHang(rs.getString("tenKhachHang"));
+                hd.setTenNhanVien(rs.getString("tenNhanVien"));
                 list.add(hd);
             }
 
@@ -49,9 +51,10 @@ public class HoaDonDao {
     public HoaDon getById(int id) {
 
         String sql = """
-            SELECT hd.*, kh.tenKhachHang 
+            SELECT hd.*, kh.tenKhachHang, nv.tenNhanVien
             FROM z_hoadon hd
             JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
+            JOIN y_nhanvien nv ON hd.maNhanVien = nv.maNhanVien
             WHERE hd.maHoaDon=?
         """;
 
@@ -70,6 +73,7 @@ public class HoaDonDao {
                         rs.getBigDecimal("tongTien"),
                         rs.getString("trangThai"));
                 hd.setTenKhachHang(rs.getString("tenKhachHang"));
+                hd.setTenNhanVien(rs.getString("tenNhanVien"));
                 return hd;
             }
 
@@ -249,9 +253,8 @@ public class HoaDonDao {
     public BigDecimal getDoanhThu() {
         String sql = """
                     SELECT
-                        COALESCE(SUM(h.tongTien), 0) + COALESCE(SUM(k.tienBoiThuong), 0) AS doanhThu
+                        COALESCE(SUM(h.tongTien), 0) AS doanhThu
                     FROM z_hoadon h
-                    LEFT JOIN b_kiemtraphong k ON h.maHoaDon = k.maHoaDon
                     WHERE h.trangThai = 'Đã thanh toán'
                     AND EXTRACT(MONTH FROM h.ngayThanhToan) = EXTRACT(MONTH FROM CURRENT_TIMESTAMP)
                     AND EXTRACT(YEAR FROM h.ngayThanhToan) = EXTRACT(YEAR FROM CURRENT_TIMESTAMP);

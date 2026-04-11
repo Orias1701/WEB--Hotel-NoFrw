@@ -38,8 +38,45 @@ public class HoaDonServlet extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("maHoaDon"));
                 HoaDon hd = hoaDonService.getById(id);
                 if (hd != null && !"Đã thanh toán".equals(hd.getTrangThai())) {
+                    Timestamp now = new Timestamp(System.currentTimeMillis());
                     hd.setTrangThai("Đã thanh toán");
-                    hd.setNgayThanhToan(new Timestamp(System.currentTimeMillis()));
+                    hd.setNgayThanhToan(now);
+                    hoaDonService.update(hd);
+
+                    // Tự động làm thủ tục trả phòng cho TOÀN BỘ danh sách phòng trong đoàn
+                    service.DatPhongService dpService = new service.DatPhongService();
+                    service.PhongService pService = new service.PhongService();
+                    List<model.DatPhong> listDP = dpService.getAllByMaHoaDon(id);
+                    
+                    java.math.BigDecimal tongTienDoan = java.math.BigDecimal.ZERO;
+
+                    for (model.DatPhong dp : listDP) {
+                        java.math.BigDecimal tienCuaPhongNay = java.math.BigDecimal.ZERO;
+                        
+                        if (dp.getNgayTraPhong() == null) {
+                            // Phòng chưa trả -> Làm thủ tục tự động
+                            model.LoaiPhong lp = pService.getLoaiPhongByPhong(dp.getMaPhong());
+                            java.math.BigDecimal giaGio = lp.getGiaCoBan();
+
+                            java.math.BigDecimal tienPhong = dp.getTienPhong() != null ? dp.getTienPhong() : java.math.BigDecimal.ZERO;
+                            java.math.BigDecimal tienPhat = util.DatPhongUtils.tinhPhatTheoGio(dp.getNgayHenTra(), now, giaGio);
+
+                            if (dpService.traPhong(dp.getMaDatPhong(), now, tienPhong, tienPhat)) {
+                                pService.updateStatus(dp.getMaPhong(), "Trống");
+                                tienCuaPhongNay = tienPhong.add(tienPhat);
+                            }
+                        } else {
+                            // Phòng đã trả trước đó -> Lấy số tiền đã chốt
+                            java.math.BigDecimal tienPhong = dp.getTienPhong() != null ? dp.getTienPhong() : java.math.BigDecimal.ZERO;
+                            java.math.BigDecimal tienPhat = dp.getTienPhat() != null ? dp.getTienPhat() : java.math.BigDecimal.ZERO;
+                            tienCuaPhongNay = tienPhong.add(tienPhat);
+                        }
+                        
+                        tongTienDoan = tongTienDoan.add(tienCuaPhongNay);
+                    }
+                    
+                    // Cập nhật lại tổng tiền Hóa đơn dựa trên tất cả các phòng
+                    hd.setTongTien(tongTienDoan);
                     hoaDonService.update(hd);
                 }
             }

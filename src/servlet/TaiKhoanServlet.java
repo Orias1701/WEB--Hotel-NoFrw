@@ -57,7 +57,20 @@ public class TaiKhoanServlet extends HttpServlet {
                 taiKhoanService.update(tk);
             } else if ("delete".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
-                taiKhoanService.delete(id);
+                if (new service.DeletionCheckService().canDelete("taikhoan", id)) {
+                    taiKhoanService.delete(id);
+                } else {
+                    System.out.println("⚠️ Chặn xóa Tài khoản #" + id + " do có ràng buộc dữ liệu.");
+                }
+            } else if ("updatePassword".equals(action)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                String newPass = request.getParameter("matKhau");
+                taiKhoanService.updatePassword(id, newPass);
+                // Return success or something? For simplicity, we'll just redirect to main for now.
+                // But wait, this is likely an AJAX/form call from a modal.
+                // We'll redirect to the same view.
+                response.sendRedirect("main?view=nhan-vien");
+                return;
             }
 
             response.sendRedirect("main?view=tai-khoan");

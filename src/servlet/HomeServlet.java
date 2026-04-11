@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import service.KhachHangService;
 import service.NhanVienService;
 import service.PhongService;
-import service.ThietBiService;
+
 import repository.ThongKeDao;
 
 @WebServlet("/home-data")
@@ -23,7 +23,7 @@ public class HomeServlet extends HttpServlet {
     private PhongService phongService = new PhongService();
     private NhanVienService nhanVienService = new NhanVienService();
     private KhachHangService khachHangService = new KhachHangService();
-    private ThietBiService thietBiService = new ThietBiService();
+
     private ThongKeDao thongKeDao = new ThongKeDao();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -34,7 +34,7 @@ public class HomeServlet extends HttpServlet {
         request.setAttribute("countPhongDangSuDung", phongService.countPhongDangSuDung());
         request.setAttribute("countNhanVien", nhanVienService.countNhanVien());
         request.setAttribute("countKhachHang", khachHangService.countKhachHang());
-        request.setAttribute("countThietBi", thietBiService.countThietBi());
+
         
         // Revenue logic
         String currentMonthKey = YearMonth.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
@@ -45,13 +45,20 @@ public class HomeServlet extends HttpServlet {
         request.setAttribute("displayMonth", displayMonth);
         request.setAttribute("currentRevenue", currentRevenue);
 
-        // Chart data
-        Map<String, Integer> datPhongMap = thongKeDao.getSoLuongDatPhongTheoThang();
-        request.setAttribute("chartLabels", "['" + String.join("','", datPhongMap.keySet()) + "']");
-        request.setAttribute("chartBookingData", datPhongMap.values().toString());
-        request.setAttribute("chartRevenueData", revenueMap.values().toString());
+        // 3. New Dashboard Stats (30 days daily)
+        Map<String, Double> rev30 = thongKeDao.getDoanhThu30NgayGanNhat();
+        Map<String, Integer> book30 = thongKeDao.getDatPhong30NgayGanNhat();
+        Map<String, Double> ratio = thongKeDao.getTiLeTienPhongPhat();
+
+        // Format for Chart.js (Standard JSON with double quotes)
+        request.setAttribute("labels30", "[\"" + String.join("\",\"", rev30.keySet()) + "\"]");
+        request.setAttribute("dataRev30", rev30.values().toString());
+        request.setAttribute("dataBook30", book30.values().toString());
         
-        // Forward to the fragment
+        request.setAttribute("labelsRatio", "[\"" + String.join("\",\"", ratio.keySet()) + "\"]");
+        request.setAttribute("dataRatio", ratio.values().toString());
+        
+        // Forward to the home page
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 }

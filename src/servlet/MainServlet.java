@@ -20,6 +20,11 @@ public class MainServlet extends HttpServlet {
             return;
         }
 
+        model.TaiKhoan user = (model.TaiKhoan) session.getAttribute("user");
+        service.NhanVienService nvService = new service.NhanVienService();
+        model.NhanVien profile = nvService.getById(user.getMaNhanVien());
+        request.setAttribute("profile", profile);
+
         // Check if it's an AJAX request to load a module
         String module = request.getParameter("view");
         boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));

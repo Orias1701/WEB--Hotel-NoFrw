@@ -151,6 +151,8 @@ DECLARE
     v_ngayTra_calc TIMESTAMP;
     v_ngayTra_real TIMESTAMP;
     v_tienPhong DECIMAL;
+    v_tienPhat DECIMAL;
+    v_diff_hours INT;
     
     -- Lấy thời điểm hiện tại làm mốc so sánh
     v_now TIMESTAMP := CURRENT_TIMESTAMP; 
@@ -207,12 +209,21 @@ BEGIN
                 v_ngayTra_real := v_ngayTra_calc;
             END IF;
 
-            -- Tính tiền phòng tạm (theo giờ)
+            -- Tính tiền phòng (theo giờ, khớp với Java math)
             IF v_ngayTra_real IS NOT NULL THEN
-                v_tienPhong := (EXTRACT(EPOCH FROM (v_ngayTra_real - v_ngayTao)) / 3600.0) * v_giaCoBan;
+                v_tienPhong := floor(EXTRACT(EPOCH FROM (v_ngayTra_real - v_ngayTao)) / 3600) * v_giaCoBan;
             ELSE
                 -- Nếu chưa trả thì tính đến thời điểm hiện tại
-                v_tienPhong := (EXTRACT(EPOCH FROM (v_now - v_ngayTao)) / 3600.0) * v_giaCoBan;
+                v_tienPhong := floor(EXTRACT(EPOCH FROM (v_now - v_ngayTao)) / 3600) * v_giaCoBan;
+            END IF;
+
+            -- Tính tiền phạt (MỚI: Trễ >= 1h hoặc Sớm >= 12h)
+            v_tienPhat := 0;
+            IF v_ngayTra_real IS NOT NULL THEN
+                v_diff_hours := floor(EXTRACT(EPOCH FROM (v_ngayTra_real - v_ngayHenTra)) / 3600);
+                IF v_diff_hours >= 1 OR v_diff_hours <= -12 THEN
+                    v_tienPhat := v_giaCoBan * 0.1 * ABS(v_diff_hours);
+                END IF;
             END IF;
 
             -- Thêm chi tiết đặt phòng (Đảm bảo mã nhân viên trùng với hoá đơn)
@@ -225,7 +236,7 @@ BEGIN
                 i, v_maNV, v_maPhong, 
                 v_ngayTao - interval '1 day', -- Cho ngày đặt sớm hơn 1 ngày
                 v_ngayTao, v_ngayHenTra, v_ngayTra_real, v_ngayThanhToan_real, 
-                v_tienPhong, 0
+                v_tienPhong, v_tienPhat
             );
         END LOOP;
     END LOOP;

@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
         <div class="section-title">TÀI KHOẢN</div>
@@ -29,12 +29,12 @@
                 <table class="swing-table" id="tblTK">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th class="center_cell">ID</th>
                             <th>Tài khoản</th>
                             <th>Mật khẩu</th>
                             <th>Nhân viên</th>
                             <th>Vai trò</th>
-                            <th style="width: 100px; text-align: center;">Hành động</th>
+                            <th class="center_cell" style="width: 121px;">Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,12 +43,12 @@
                                 data-user="${tk.getTaiKhoan()}" data-pass="${tk.getMatKhau()}"
                                 data-manv="${tk.getMaNhanVien()}" data-tennv="${tk.getTenNhanVien()}"
                                 data-mavt="${tk.getMaVaiTro()}" data-tenvt="${tk.getTenVaiTro()}">
-                                <td>${tk.getId()}</td>
+                                <td class="center_cell">${tk.getId()}</td>
                                 <td>${tk.getTaiKhoan()}</td>
                                 <td>••••••••</td>
                                 <td>${tk.getTenNhanVien()}</td>
                                 <td>${tk.getTenVaiTro()}</td>
-                                <td class="action-cell">
+                                <td class="action-cell center_cell">
                                     <form id="frmDelTK_${tk.getId()}" action="tai-khoan-data" method="post"
                                         style="display:none;">
                                         <input type="hidden" name="action" value="delete">

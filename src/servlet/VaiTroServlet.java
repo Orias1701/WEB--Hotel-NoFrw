@@ -41,7 +41,11 @@ public class VaiTroServlet extends HttpServlet {
                 vaiTroService.update(vt);
             } else if ("delete".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("maVaiTro"));
-                vaiTroService.delete(id);
+                if (new service.DeletionCheckService().canDelete("vaitro", id)) {
+                    vaiTroService.delete(id);
+                } else {
+                    System.out.println("⚠️ Chặn xóa Vai trò #" + id + " do có ràng buộc dữ liệu.");
+                }
             }
             
             response.sendRedirect("main?view=vai-tro");

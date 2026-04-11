@@ -1,14 +1,16 @@
 :root {
-    --excel-green: #217346;
-    --excel-green-hover: #1c613b;
-    --excel-light-green: #E6F2EA;
+    --color-primary: #217346;
+    --color-primary-hover: #1c613b;
+    --color-primary-light: #dbffed;
+    --color-primary-border: #009900;
     --color-danger: #C0392B;
+    --color-danger-hover: #a02b2b;
     --color-warning: #F39C12;
+    --color-warning-hover: #d1850f;
     --color-text: #323232;
     --color-bg: #F8F9FA;
     --color-border: #D2D2D2;
-    --excel-green-border: #009900;
-    --sidebar-width: 240px;
+    --sidebar-width: 10%;
 }
 
 * {
@@ -35,9 +37,11 @@ body {
 
 /* Sidebar - mimicking BoxLayout (Y) */
 .sidebar {
-    width: var(--sidebar-width);
+    width: var(--sidebar-width) !important;
+    min-width: var(--sidebar-width) !important;
+    flex: 0 0 var(--sidebar-width) !important;
     background-color: white;
-    border-right: 2px solid var(--excel-green);
+    border-right: 2px solid var(--color-primary);
     display: flex;
     flex-direction: column;
     z-index: 100;
@@ -50,9 +54,9 @@ body {
 }
 
 .user-info {
-    font-size: 1.1rem;
+    font-size: 0.85rem !important;
     font-weight: bold;
-    color: var(--excel-green);
+    color: var(--color-primary);
 }
 
 .sidebar-nav {
@@ -64,7 +68,7 @@ body {
     padding: 12px 20px;
     font-size: 15px;
     font-weight: 600;
-    color: var(--excel-green);
+    color: var(--color-primary);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -77,7 +81,7 @@ body {
 }
 
 .nav-item.active {
-    background-color: var(--excel-green);
+    background-color: var(--color-primary);
     color: white;
 }
 
@@ -100,7 +104,8 @@ body {
     flex: 1;
     overflow-y: auto;
     background-color: white;
-    padding: 0;
+    padding: 20px 30px;
+    background-color: var(--color-bg);
 }
 
 /* Swing Components Replication */
@@ -122,7 +127,7 @@ body {
 
 .rounded-input {
     padding: 8px 12px;
-    border: 1px solid var(--excel-green-border);
+    border: 1px solid var(--color-primary-border);
     border-radius: 10px;
     outline: none;
     font-size: 14px;
@@ -138,12 +143,12 @@ body {
 }
 
 .btn-primary {
-    background-color: var(--excel-green);
+    background-color: var(--color-primary);
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: var(--excel-green-hover);
+    background-color: var(--color-primary-hover);
 }
 
 .btn-danger {
@@ -151,9 +156,17 @@ body {
     color: white;
 }
 
+.btn-danger:hover {
+    background-color: var(--color-danger-hover);
+}
+
 .btn-warning {
     background-color: var(--color-warning);
     color: white;
+}
+
+.btn-warning:hover {
+    background-color: var(--color-warning-hover);
 }
 
 /* Table Replication */
@@ -168,20 +181,25 @@ body {
 }
 
 .swing-table th {
-    background-color: var(--excel-green);
+    background-color: var(--color-primary);
     color: white;
     text-align: left;
     padding: 12px 10px;
     font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .swing-table td {
-    padding: 10px;
+    padding: 0 10px;
+    height: 45px;
     border: 1px solid var(--color-border);
+    vertical-align: middle;
 }
 
 .swing-table tr:hover {
-    background-color: var(--excel-light-green);
+    background-color: var(--color-primary-light);
 }
 
 /* Dashboard Cards */
@@ -231,8 +249,8 @@ body {
 }
 
 .card-green {
-    border-left: 5px solid var(--excel-green);
-    color: var(--excel-green);
+    border-left: 5px solid var(--color-primary);
+    color: var(--color-primary);
 }
 
 /* Modal Overlays & Forms */
@@ -240,63 +258,133 @@ body {
     background-color: #6c757d;
     color: white;
 }
+
 .btn-secondary:hover {
     background-color: #5a6268;
 }
 
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 1000;
 }
+
 .modal-overlay.active {
     display: flex;
 }
+
 .modal-content {
     background: white;
     padding: 20px 30px;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     min-width: 500px;
     max-width: 800px;
 }
+
 .modal-header {
     font-size: 20px;
     font-weight: bold;
-    color: var(--excel-green);
+    color: var(--color-primary);
     margin-bottom: 20px;
-    border-bottom: 2px solid var(--excel-green);
+    border-bottom: 2px solid var(--color-primary);
     padding-bottom: 10px;
 }
+
 .modal-form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
     margin-bottom: 25px;
 }
+
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
+
 .form-group.full-width {
     grid-column: 1 / -1;
 }
+
 .form-group label {
     font-weight: 500;
 }
+
 .modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
 }
+
 .action-cell {
     text-align: center;
 }
+
 .swing-table tr[onclick] {
     cursor: pointer;
+}
+
+.center_cell,
+.swing-table th.center_cell,
+.swing-table td.center_cell {
+    text-align: center !important;
+}
+
+.currency-cell,
+.swing-table th.currency-cell,
+.swing-table td.currency-cell {
+    text-align: right !important;
+    padding-right: 25px !important;
+}
+
+/* Status Badges - Pill labels */
+.status-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 100px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* Green: Trống, Đã thanh toán */
+.status-paid,
+.status-trong {
+    background-color: #e6f7ef;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+/* Red: Chưa thanh toán */
+.status-unpaid {
+    background-color: #fff0f0;
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+}
+
+/* Blue: Đang ở / Đang thuê */
+.status-thue,
+.status-dang-thue {
+    background-color: #f0f7ff;
+    color: #007bff;
+    border: 1px solid #007bff;
+}
+
+/* Yellow: Sửa chữa / Khác */
+.status-repair,
+.status-sua {
+    background-color: #fffbef;
+    color: #d4a017;
+    border: 1px solid #d4a017;
 }

@@ -46,7 +46,11 @@ public class LoaiPhongServlet extends HttpServlet {
                 loaiPhongService.update(lp);
             } else if ("delete".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("maLoaiPhong"));
-                loaiPhongService.delete(id);
+                if (new service.DeletionCheckService().canDelete("loaiphong", id)) {
+                    loaiPhongService.delete(id);
+                } else {
+                    System.out.println("⚠️ Chặn xóa Loại phòng #" + id + " do có ràng buộc dữ liệu.");
+                }
             }
             
             response.sendRedirect("main?view=loai-phong");

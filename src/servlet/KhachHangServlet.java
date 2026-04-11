@@ -46,7 +46,11 @@ public class KhachHangServlet extends HttpServlet {
                 khachHangService.update(kh);
             } else if ("delete".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("maKhachHang"));
-                khachHangService.delete(id);
+                if (new service.DeletionCheckService().canDelete("khachhang", id)) {
+                    khachHangService.delete(id);
+                } else {
+                    System.out.println("⚠️ Chặn xóa Khách hàng #" + id + " do có ràng buộc dữ liệu.");
+                }
             }
             
             response.sendRedirect("main?view=khach-hang");
