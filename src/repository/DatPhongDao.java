@@ -16,11 +16,12 @@ public class DatPhongDao {
         List<DatPhong> list = new ArrayList<>();
 
         String sql = """
-            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong 
+            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong, nv.tenNhanVien
             FROM a_datphong dp
             JOIN z_hoadon hd ON dp.maHoaDon = hd.maHoaDon
             JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
             JOIN a_phong p ON dp.maPhong = p.maPhong
+            JOIN y_nhanvien nv ON dp.maNhanVien = nv.maNhanVien
             ORDER BY dp.maDatPhong DESC
         """;
 
@@ -39,13 +40,13 @@ public class DatPhongDao {
                         rs.getTimestamp("ngayHenTra"),
                         rs.getTimestamp("ngayTraPhong"),
                         rs.getTimestamp("ngayThanhToan"),
-
                         rs.getBigDecimal("tienPhong"),
                         rs.getBigDecimal("tienPhat")
                 );
                 dp.setTenKhachHang(rs.getString("tenKhachHang"));
                 dp.setMaKhachHang(rs.getInt("maKhachHang"));
                 dp.setSoPhong(rs.getString("soPhong"));
+                dp.setTenNhanVien(rs.getString("tenNhanVien"));
                 list.add(dp);
             }
 
@@ -58,11 +59,12 @@ public class DatPhongDao {
     // GET BY ID
     public DatPhong getById(int id) {
         String sql = """
-            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong 
+            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong, nv.tenNhanVien
             FROM a_datphong dp
             JOIN z_hoadon hd ON dp.maHoaDon = hd.maHoaDon
             JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
             JOIN a_phong p ON dp.maPhong = p.maPhong
+            JOIN y_nhanvien nv ON dp.maNhanVien = nv.maNhanVien
             WHERE dp.maDatPhong = ?
         """;
 
@@ -87,6 +89,7 @@ public class DatPhongDao {
                     dp.setTenKhachHang(rs.getString("tenKhachHang"));
                     dp.setMaKhachHang(rs.getInt("maKhachHang"));
                     dp.setSoPhong(rs.getString("soPhong"));
+                    dp.setTenNhanVien(rs.getString("tenNhanVien"));
                     return dp;
                 }
             }
@@ -102,11 +105,12 @@ public class DatPhongDao {
     public List<DatPhong> getAllByMaHoaDon(int maHoaDon) {
         List<DatPhong> list = new ArrayList<>();
         String sql = """
-            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong 
+            SELECT dp.*, kh.tenKhachHang, kh.maKhachHang, p.soPhong, nv.tenNhanVien
             FROM a_datphong dp
             JOIN z_hoadon hd ON dp.maHoaDon = hd.maHoaDon
             JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
             JOIN a_phong p ON dp.maPhong = p.maPhong
+            JOIN y_nhanvien nv ON dp.maNhanVien = nv.maNhanVien
             WHERE dp.maHoaDon = ?
         """;
 
@@ -130,6 +134,7 @@ public class DatPhongDao {
                     dp.setTenKhachHang(rs.getString("tenKhachHang"));
                     dp.setMaKhachHang(rs.getInt("maKhachHang"));
                     dp.setSoPhong(rs.getString("soPhong"));
+                    dp.setTenNhanVien(rs.getString("tenNhanVien"));
                     list.add(dp);
                 }
             }
@@ -157,8 +162,8 @@ public class DatPhongDao {
             ps.setTimestamp(4, d.getNgayDatPhong());
             ps.setTimestamp(5, d.getNgayNhanPhong());
             ps.setTimestamp(6, d.getNgayHenTra());
-            ps.setBigDecimal(7, d.getTienPhong()); // Đổi từ setDouble sang setBigDecimal
-            ps.setBigDecimal(8, d.getTienPhat());  // Đổi từ setDouble sang setBigDecimal
+            ps.setBigDecimal(7, d.getTienPhong()); 
+            ps.setBigDecimal(8, d.getTienPhat());  
 
             return ps.executeUpdate() > 0;
 
@@ -176,6 +181,7 @@ public class DatPhongDao {
             UPDATE a_datphong
             SET ngayTraPhong = ?,
                 ngayThanhToan = ?,
+                tienPhong = ?,
                 tienPhat = ?
             WHERE maDatPhong = ?
         """;
@@ -184,8 +190,9 @@ public class DatPhongDao {
 
             ps.setTimestamp(1, ngayTra);
             ps.setTimestamp(2, ngayTra);
-            ps.setBigDecimal(3, tienPhat); // Đổi từ setDouble sang setBigDecimal
-            ps.setInt(4, id);
+            ps.setBigDecimal(3, tienPhong);
+            ps.setBigDecimal(4, tienPhat); // Đổi từ setDouble sang setBigDecimal
+            ps.setInt(5, id);
 
             return ps.executeUpdate() > 0;
 
@@ -209,6 +216,26 @@ public class DatPhongDao {
             e.printStackTrace();
         }
 
+        return false;
+    }
+
+    // ✅ CANCEL BOOKING (Hủy đặt)
+    public boolean huyDatPhong(int id, BigDecimal tienPhat) {
+        String sql = """
+            UPDATE a_datphong
+            SET ngayTraPhong = CURRENT_TIMESTAMP,
+                tienPhong = 0,
+                tienPhat = ?
+            WHERE maDatPhong = ?
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBigDecimal(1, tienPhat);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return false;
     }
 }

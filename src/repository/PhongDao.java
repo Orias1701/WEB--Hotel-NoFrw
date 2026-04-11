@@ -13,7 +13,7 @@ public class PhongDao {
     public List<Phong> getAll() {
         List<Phong> list = new ArrayList<>();
         String sql = """
-                    SELECT p.maPhong, p.soPhong, l.tenLoaiPhong, p.trangThai
+                    SELECT p.maPhong, p.soPhong, p.maLoaiPhong, l.tenLoaiPhong, p.trangThai
                     FROM a_phong p
                     LEFT JOIN a_loaiphong l ON p.maLoaiPhong = l.maLoaiPhong
                     ORDER BY p.maPhong DESC
@@ -27,8 +27,9 @@ public class PhongDao {
                 list.add(new Phong(
                         rs.getInt(1),
                         rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4)));
+                        rs.getInt(3),
+                        rs.getString(4),
+                        rs.getString(5)));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,6 +107,7 @@ public class PhongDao {
                         rs.getInt("maPhong"),
                         rs.getString("soPhong"),
                         rs.getInt("maLoaiPhong"),
+                        null, // tenLoaiPhong not needed for byId usually, or fetch it if needed
                         rs.getString("trangThai"));
             }
 

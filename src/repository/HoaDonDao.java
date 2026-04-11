@@ -4,56 +4,83 @@ import config.DBConnection;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List; // Import BigDecimal
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import model.HoaDon;
 
 public class HoaDonDao {
 
     private Connection conn = DBConnection.getConnection();
 
-    // ================= GET ALL =================
+    // ================= GET ALL (Optimized with Details) =================
     public List<HoaDon> getAll() {
-        List<HoaDon> list = new ArrayList<>();
+        Map<Integer, HoaDon> map = new LinkedHashMap<>();
 
+        // Join with DatPhong and Phong to get room details in one shot (Avoid N+1)
         String sql = """
-            SELECT hd.*, kh.tenKhachHang 
-            FROM z_hoadon hd
-            JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
-            ORDER BY hd.maHoaDon DESC
-        """;
+                    SELECT hd.*, kh.tenKhachHang, nv.tenNhanVien,
+                           dp.maDatPhong, dp.maPhong, dp.tienPhong, dp.tienPhat, p.soPhong
+                    FROM z_hoadon hd
+                    JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
+                    JOIN y_nhanvien nv ON hd.maNhanVien = nv.maNhanVien
+                    LEFT JOIN a_datphong dp ON hd.maHoaDon = dp.maHoaDon
+                    LEFT JOIN a_phong p ON dp.maPhong = p.maPhong
+                    ORDER BY hd.maHoaDon DESC
+                """;
 
         try (PreparedStatement ps = conn.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                HoaDon hd = new HoaDon(
-                        rs.getInt("maHoaDon"),
+                int maHD = rs.getInt("maHoaDon");
+                HoaDon hd = map.get(maHD);
+                
+                if (hd == null) {
+                    hd = new HoaDon(
+                        maHD,
                         rs.getInt("maNhanVien"),
                         rs.getInt("maKhachHang"),
                         rs.getTimestamp("ngayTao"),
                         rs.getTimestamp("ngayThanhToan"),
                         rs.getBigDecimal("tongTien"),
                         rs.getString("trangThai"));
-                hd.setTenKhachHang(rs.getString("tenKhachHang"));
-                list.add(hd);
+                    hd.setTenKhachHang(rs.getString("tenKhachHang"));
+                    hd.setTenNhanVien(rs.getString("tenNhanVien"));
+                    map.put(maHD, hd);
+                }
+
+                // Add room detail if exists
+                int maDP = rs.getInt("maDatPhong");
+                if (maDP > 0) {
+                    model.DatPhong dp = new model.DatPhong();
+                    dp.setMaDatPhong(maDP);
+                    dp.setMaPhong(rs.getInt("maPhong"));
+                    dp.setSoPhong(rs.getString("soPhong"));
+                    dp.setTienPhong(rs.getBigDecimal("tienPhong"));
+                    dp.setTienPhat(rs.getBigDecimal("tienPhat"));
+                    hd.getChiTiet().add(dp);
+                }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return list;
+        return new ArrayList<>(map.values());
     }
+
 
     // ================= GET BY ID =================
     public HoaDon getById(int id) {
 
         String sql = """
-            SELECT hd.*, kh.tenKhachHang 
-            FROM z_hoadon hd
-            JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
-            WHERE hd.maHoaDon=?
-        """;
+                    SELECT hd.*, kh.tenKhachHang, nv.tenNhanVien
+                    FROM z_hoadon hd
+                    JOIN x_khachhang kh ON hd.maKhachHang = kh.maKhachHang
+                    JOIN y_nhanvien nv ON hd.maNhanVien = nv.maNhanVien
+                    WHERE hd.maHoaDon=?
+                """;
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -70,6 +97,7 @@ public class HoaDonDao {
                         rs.getBigDecimal("tongTien"),
                         rs.getString("trangThai"));
                 hd.setTenKhachHang(rs.getString("tenKhachHang"));
+                hd.setTenNhanVien(rs.getString("tenNhanVien"));
                 return hd;
             }
 
@@ -119,7 +147,7 @@ public class HoaDonDao {
             ps.setInt(2, hd.getMaKhachHang());
             ps.setTimestamp(3, hd.getNgayTao());
             ps.setBigDecimal(4, hd.getTongTien()); // Đổi từ setDouble sang setBigDecimal
-            ps.setString(5, "Chưa thanh toán");
+            ps.setString(5, "Ch thanh toán");
 
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
@@ -230,7 +258,7 @@ public class HoaDonDao {
             ps.setInt(2, hd.getMaKhachHang());
             ps.setTimestamp(3, hd.getNgayTao());
             ps.setBigDecimal(4, hd.getTongTien()); // Đổi từ setDouble sang setBigDecimal
-            ps.setString(5, "Chưa thanh toán");
+            ps.setString(5, "Ch thanh toán");
 
             int affected = ps.executeUpdate();
             if (affected == 0)
@@ -249,9 +277,8 @@ public class HoaDonDao {
     public BigDecimal getDoanhThu() {
         String sql = """
                     SELECT
-                        COALESCE(SUM(h.tongTien), 0) + COALESCE(SUM(k.tienBoiThuong), 0) AS doanhThu
+                        COALESCE(SUM(h.tongTien), 0) AS doanhThu
                     FROM z_hoadon h
-                    LEFT JOIN b_kiemtraphong k ON h.maHoaDon = k.maHoaDon
                     WHERE h.trangThai = 'Đã thanh toán'
                     AND EXTRACT(MONTH FROM h.ngayThanhToan) = EXTRACT(MONTH FROM CURRENT_TIMESTAMP)
                     AND EXTRACT(YEAR FROM h.ngayThanhToan) = EXTRACT(YEAR FROM CURRENT_TIMESTAMP);
