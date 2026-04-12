@@ -1,69 +1,238 @@
-# BÁO CÁO DỰ ÁN: HỆ THỐNG QUẢN LÝ KHÁCH SẠN (WEB DASHBOARD)
+# BÁO CÁO DỰ ÁN: HỆ THỐNG QUẢN LÝ KHÁCH SẠN (HOTEL MANAGEMENT SYSTEM)
 
-## 1. Mục đích dự án
+## LỜI MỞ ĐẦU
 
-Dự án được xây dựng nhằm hiện đại hóa hệ thống quản lý khách sạn từ nền tảng Desktop (Java Swing) sang nền tảng Web Dashboard. Mục tiêu chính bao gồm:
-
-- **Tính linh hoạt:** Cho phép quản lý hệ thống từ xa qua trình duyệt web.
-- **Hiệu năng cao:** Sử dụng cấu trúc "No-Framework" (thuần JSP/Servlet) để giảm thiểu độ trễ và tối ưu tốc độ phản hồi.
-- **Trải nghiệm người dùng:** Chuyển đổi giao diện sang dạng Single Page Dashboard hiện đại, mượt mà với các yêu cầu không làm tải lại trang (AJAX).
-
-## 2. Các tính năng chính
-
-Hệ thống bao gồm các phân hệ quản lý cốt lõi:
-
-- **Quản lý Phòng:** Theo dõi danh sách phòng, trạng thái (Trống, Có khách, Bảo trì) và loại phòng.
-- **Quản lý Đặt phòng:** Quy trình tiếp nhận khách, đặt phòng và cập nhật lịch trình lưu trú.
-- **Quản lý Hóa đơn:** Tự động tính toán chi phí, quản lý thu chi và lịch sử giao dịch.
-- **Thống kê & Báo cáo:** Tự động tổng hợp doanh thu và hiệu suất sử dụng phòng qua JasperReports.
-- **Nhân sự & Tài khoản:** Quản lý thông tin nhân viên, phân quyền truy cập (Admin, Quản lý, Nhân viên) và bảo mật tài khoản.
-
-## 3. Công nghệ sử dụng
-
-Dự án sử dụng bộ công nghệ (Tech Stack) mạnh mẽ và ổn định:
-
-- **Backend:**
-  - Ngôn ngữ: Java 21 LTS.
-  - Công nghệ cốt lõi: Servlet 4.0, JSP 2.3.
-  - Quản lý môi trường: `io.github.cdimascio:dotenv-java`.
-  - Báo cáo & Biểu đồ: JasperReports, JFreeChart (Dùng cho module Thống kê).
-- **Cơ sở dữ liệu:**
-  - Hệ quản trị: PostgreSQL.
-  - Kết nối: JDBC (PostgreSQL Driver).
-- **Frontend:**
-  - Cấu trúc & Giao diện: HTML5, Vanilla CSS3 (Custom Design System).
-  - Logic: JavaScript ES6+ (Sử dụng Fetch API để xử lý Single Page App concept).
-- **Công cụ phát triển:**
-  - Build tool: Maven.
-  - Web Server: Jetty 9 (Embedded server tích hợp trực tiếp vào dự án).
-
-## 4. Cấu trúc cơ sở dữ liệu
-
-Hệ thống sử dụng lược đồ (Schema) `hotelbook` với các bảng dữ liệu chính:
-
-- **Nhóm Phân quyền:** `y_vaitro` (Lưu thông tin vai trò), `y_taikhoan` (Thông tin đăng nhập).
-- **Nhóm Con người:** `y_nhanvien` (Dữ liệu nhân viên), `x_khachhang` (Dữ liệu khách hàng).
-- **Nhóm Hạ tầng:** `a_loaiphong` (Các loại phòng và giá cơ bản), `a_phong` (Chi tiết từng phòng và trạng thái).
-- **Nhóm Giao dịch:** `z_hoadon` (Thông tin tổng quát hóa đơn), `a_datphong` (Chi tiết các lượt đặt phòng, tiền phòng, tiền phạt).
-
-## 5. Cấu trúc thư mục dự án
-
-Cấu trúc được tổ chức theo mô hình phân lớp (Layered Architecture) giúp tách biệt rõ ràng các vai trò:
-
-| Thư mục       | Vai trò dưới góc độ lập trình viên                                                                                                                   |
-| :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `config/`     | Cấu hình kết nối cơ sở dữ liệu (DBConnection).                                                                                             |
-| `model/`      | Các định nghĩa thực thể (Entities/POJOs).                                                                                                    |
-| `repository/` | Tầng truy xuất dữ liệu (DAO) sử dụng JDBC.                                                                                                    |
-| `service/`    | Tầng xử lý nghiệp vụ chính của hệ thống.                                                                                                     |
-| `servlet/`    | Các Web Servlet điều phối yêu cầu người dùng.                                                                                                |
-| `controller/` | Các lớp điều khiển logic (nghiệp vụ xử lý từ phiên bản Desktop).                                                                             |
-| `web/`        | Các tệp giao diện (JSP Fragments, CSS, JS).                                                                                                   |
-| `util/`       | Các công cụ tiện ích (Định dạng tiền tệ, mã hóa...).                                                                                          |
-| `database/`   | Lưu trữ mã nguồn SQL (`database.sql`) và dữ liệu mẫu (`dataseed.sql`) để khởi tạo môi trường.                                              |
-| `docs/`       | Tài liệu hướng dẫn và đặc tả kỹ thuật của dự án.                                                                                                |
-| `pom.xml`     | Tệp cấu hình Maven, quản lý toàn bộ thư viện và quy trình đóng gói ứng dụng.                                                                  |
+Trong thời đại chuyển đổi số, việc ứng dụng công nghệ thông tin vào quản lý quy trình nghiệp vụ là yếu tố sống còn của doanh nghiệp. Hệ thống Quản lý Khách sạn được xây dựng nhằm tối ưu hóa việc quản lý lưu trú, giảm thiểu sai sót thủ công và cung cấp dữ liệu thống kê chính xác cho nhà quản lý. Báo cáo này trình bày chi tiết từ khâu phân tích yêu cầu, thiết kế hệ thống, xây dựng ứng dụng đến kiểm thử và đánh giá kết quả thực hiện.
 
 ---
 
-*Báo cáo được khởi tạo vào ngày 11/04/2026.*
+## CHƯƠNG 1. GIỚI THIỆU CHUNG
+
+### 1.1. Lý do chọn đề tài
+
+Quản lý khách sạn là một lĩnh vực đòi hỏi tính chính xác cao về thời gian và tài chính. Việc sử dụng các phần mềm rời rạc hoặc sổ sách gây khó khăn cho việc tra cứu phòng trống và tính phí phạt khi khách hủy lịch. Đề tài "Hệ thống Quản lý Khách sạn" được chọn nhằm tạo ra một giải pháp tập trung, nhất quán và hiệu quả.
+
+### 1.2. Mục tiêu của đề tài
+
+- Xây ứng dụng đa nền tảng (Web & Desktop) quản lý toàn diện quy trình khách sạn.
+- Đảm bảo tính toán tài chính chính xác (tiền phòng, tiền phạt, hóa đơn).
+- Lưu trữ dữ liệu an toàn trên hệ quản trị cơ sở dữ liệu hiện đại (PostgreSQL).
+
+### 1.3. Phạm vi nghiên cứu
+
+- Đối tượng: Quản lý Phòng, Loại phòng, Khách hàng, Nhân viên, Đơn đặt phòng và Hóa đơn.
+- Phạm vi: Nghiệp vụ tại quầy (Front-desk) và quản trị hệ thống (Back-office).
+
+### 1.4. Công cụ và công nghệ
+
+- **Ngôn ngữ:** Java 21, Maven.
+- **CSDL:** PostgreSQL.
+- **UI:** JSP/Servlet (Web) và Swing (Desktop).
+- **Report:** JasperReports 7.0.
+
+---
+
+## CHƯƠNG 2. PHÂN TÍCH YÊU CẦU HỆ THỐNG
+
+### 2.1. Sơ đồ Use Case
+
+```text
+       +-----------------------------------------------------------+
+       |                  Hệ thống Quản lý Khách sạn               |
+       |                                                           |
+       |  +------------------+           +----------------------+  |
+       |  |   Quản lý Phòng  |           |   Quản lý Nhân viên  |  |
+       |  +--------+---------+           +----------+-----------+  |
+       |           |                                |              |
+       |  +--------v---------+           +----------v-----------+  |
+       |  |  Đặt/Trả Phòng   |           |  Quản lý Tài khoản   |  |
+       |  +--------+---------+           +----------+-----------+  |
+       |           |                                |              |
+       |  +--------v---------+           +----------v-----------+  |
+       |  |   In Hóa đơn     |           |  Thống kê báo cáo    |  |
+       |  +------------------+           +----------------------+  |
+       |                                                           |
+       +-----------------------------------------------------------+
+            ^                                     ^
+            |                                     |
+      +-----+-----+                         +-----+-----+
+      | Nhân viên |                         | Quản trị  |
+      +-----------+                         +-----------+
+```
+
+### 2.2. Sơ đồ luồng dữ liệu (DFD)
+
+**DFD Mức 0 (Sơ đồ ngữ cảnh):**
+
+```text
+  [Khách hàng] --- Thông tin đặt phòng ---> ( HỆ THỐNG ) --- Hóa đơn ---> [Khách hàng]
+  [Ban quản lý] <--- Báo cáo doanh thu ---- ( HỆ THỐNG ) <--- Cấu hình ---> [Ban quản lý]
+```
+
+**DFD Mức 1 (Quy trình Đặt phòng):**
+
+```text
+  [Nhân viên] --(1) Chọn phòng--> [P1: Kiểm tra trống] --(2) Có sẵn--> [P2: Tạo Đơn đặt]
+                                                                          |
+                                                                    (D1: CSDL Booking)
+                                                                          |
+  [Khách hàng] <--(4) Xác nhận---- [P3: Ghi nhận Hóa đơn] <--(3) Lưu thông tin--+
+```
+
+---
+
+## CHƯƠNG 3. THIẾT KẾ HỆ THỐNG
+
+### 3.1. Thiết kế cơ sở dữ liệu (ERD)
+
+```text
+  [y_vaitro] 1 --- n [y_taikhoan] n --- 1 [y_nhanvien]
+                          |                    |
+                          |                    1
+                          |                    |
+  [a_phong] n --- 1 [a_loaiphong]              n
+       |                                   [a_datphong] n --- 1 [z_hoadon]
+       |                                       |              |
+       +----------------- n -------------------+              1
+                                                              |
+                                                              n
+                                                        [x_khachhang]
+```
+
+### 3.2. Mô tả chi tiết các bảng dữ liệu
+
+| STT | Tên bảng      | Ý nghĩa                                                  |
+| --- | --------------- | ---------------------------------------------------------- |
+| 1   | `y_vaitro`    | Danh mục chức vụ (Admin, Nhân viên)                   |
+| 2   | `y_nhanvien`  | Thông tin cá nhân nhân viên                           |
+| 3   | `y_taikhoan`  | Tài khoản đăng nhập hệ thống                        |
+| 4   | `x_khachhang` | Danh sách khách hàng lưu trú                          |
+| 5   | `a_loaiphong` | Định nghĩa loại phòng và giá giờ                   |
+| 6   | `a_phong`     | Danh sách phòng vật lý và trạng thái                |
+| 7   | `z_hoadon`    | Thông tin tài chính chung của đợt thanh toán        |
+| 8   | `a_datphong`  | Chi tiết thời gian nhận/trả và tiền phòng thực tế |
+
+#### Chi tiết bảng `a_datphong` (Trọng tâm):
+
+| Tên cột      | Kiểu dữ liệu | Ràng buộc | Diễn giải                        |
+| -------------- | --------------- | ----------- | ---------------------------------- |
+| `maDatPhong` | SERIAL          | Primary Key | Mã định danh tự tăng          |
+| `maHoaDon`   | INT             | Foreign Key | Liên kết bảng hóa đơn        |
+| `maPhong`    | INT             | Foreign Key | Phòng được đặt               |
+| `ngayNhan`   | TIMESTAMP       | NOT NULL    | Thời điểm khách nhận phòng   |
+| `ngayHenTra` | TIMESTAMP       | NOT NULL    | Thời điểm dự kiến trả        |
+| `tienPhong`  | DECIMAL         | DEFAULT 0   | Tổng tiền phòng tính theo giờ |
+| `tienPhat`   | DECIMAL         | DEFAULT 0   | Phí trả muộn hoặc phí hủy    |
+
+### 3.3. Sơ đồ lớp (Class Diagram)
+
+```text
+  +-------------------+       +-------------------+       +-------------------+
+  |      Servlet      |       |      Service      |       |        DAO        |
+  +-------------------+       +-------------------+       +-------------------+
+  | - doAdd()         |------>| - addBooking()    |------>| - insert()        |
+  | - doCheckout()    |       | - calculateFee()  |       | - updateStatus()  |
+  +-------------------+       +-------------------+       +-------------------+
+            |                           |                           |
+     (Web Requests)              (Business Logic)            (JDBC Database)
+```
+
+### 3.4. Sơ đồ tuần tự (Sequence Diagram) - Nghiệp vụ Đặt phòng
+
+```text
+  Actor       JSP/View        Servlet         Service          DAO            DB
+    |            |               |               |              |              |
+    |--Submit--->|               |               |              |              |
+    |            |---Request---->|               |              |              |
+    |            |               |---validate()->|              |              |
+    |            |               |               |--add()------>|              |
+    |            |               |               |              |--SQL INSERT->|
+    |            |               |               |              |<---Success---|
+    |            |<---Redirect---|               |              |              |
+    |<--Notify---|               |               |              |              |
+```
+
+---
+
+## CHƯƠNG 4. XÂY DỰNG ỨNG DỤNG
+
+### 4.1. Luồng xử lý yêu cầu (Request Pipeline)
+
+1. **Client:** Người dùng chọn phòng từ `phong.jsp` và gửi form.
+2. **Servlet:** `DatPhongServlet` tiếp nhận, parse dữ liệu ngày tháng.
+3. **Service:** `DatPhongService` phối hợp với `HoaDonService` để tạo hóa đơn trước, sau đó tạo các bản ghi đặt phòng.
+4. **DAO:** `DatPhongDao` thực thi mã SQL truy vấn vào PostgreSQL.
+5. **DB:** Cơ sở dữ liệu cập nhật trạng thái phòng sang "Đang ở".
+
+### 4.2. Mã nguồn minh họa nghiệp vụ quan trọng
+
+#### Logic tính phí trả muộn (10% giá mỗi giờ trễ):
+
+```java
+public static BigDecimal tinhPhatTheoGio(Timestamp henTra, Timestamp tra, BigDecimal giaGio) {
+    long millisDiff = tra.getTime() - henTra.getTime();
+    long hoursDiff = millisDiff / (1000 * 60 * 60); 
+    if (hoursDiff < 1) return BigDecimal.ZERO;
+
+    BigDecimal phatMoiGio = giaGio.multiply(BigDecimal.valueOf(0.10));
+    return phatMoiGio.multiply(BigDecimal.valueOf(hoursDiff));
+}
+```
+
+#### Logic hủy phòng (Phí phạt 50% tiền phòng dự kiến):
+
+```java
+public boolean huyDatPhong(int id) {
+    DatPhong dp = dao.getById(id);
+    BigDecimal originalTienPhong = dp.getTienPhong();
+    BigDecimal tienPhat = originalTienPhong.multiply(new BigDecimal("0.5"));
+    return dao.huyDatPhong(id, tienPhat); // Cập nhật phí phạt vào DB
+}
+```
+
+---
+
+## CHƯƠNG 5. KIỂM THỬ HỆ THỐNG
+
+| ID   | Kịch bản kiểm thử         | Dữ liệu đầu vào           | Kết quả mong đợi        | Kết quả thực tế  | Trạng thái |
+| ---- | ----------------------------- | ------------------------------ | --------------------------- | -------------------- | ------------ |
+| TC01 | Đăng nhập thành công     | Tài khoản đúng             | Chuyển đến trang chủ    | Như mong đợi      | PASS         |
+| TC02 | Đặt phòng quá khứ        | Ngày nhận < Ngày hiện tại | Báo lỗi không hợp lệ   | Hệ thống chặn     | PASS         |
+| TC03 | Tính tiền trả muộn        | Trễ 2 giờ, giá 100k         | Phạt 20k (10% * 2)         | Tính đúng 20k     | PASS         |
+| TC04 | Xóa loại phòng đang dùng | Mã loại đang có phòng     | Chặn xóa (Ràng buộc KH) | Báo lỗi FK         | PASS         |
+| TC05 | Hủy đặt phòng             | Chọn "Hủy"                   | Tính phạt 50%             | Hiển thị 50% phạt | PASS         |
+
+---
+
+## CHƯƠNG 6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+
+Hệ thống đã đáp ứng tốt các yêu cầu về nghiệp vụ quản lý khách sạn cơ bản. Tính năng tính phí tự động và quản lý trạng thái phòng giúp giảm thời gian vận hành đáng kể. Trong tương lai, hệ thống sẽ được mở rộng tích hợp thanh toán mã QR và ứng dụng di động cho khách hàng.
+
+---
+
+## PHỤ LỤC
+
+### A1. Script tạo bảng SQL (Trích đoạn)
+
+```sql
+CREATE TABLE a_phong (
+    maPhong SERIAL PRIMARY KEY,
+    soPhong VARCHAR(10) UNIQUE NOT NULL,
+    maLoaiPhong INT REFERENCES a_loaiphong(maLoaiPhong),
+    trangThai VARCHAR(20) DEFAULT 'Trống'
+);
+```
+
+### A2. Phân công công việc
+
+| Thành viên     | Vai trò       | Công việc chính                                    |
+| ---------------- | -------------- | ----------------------------------------------------- |
+| **Thắng** | Backend Lead   | Thiết kế Database, viết Service & DAO logic        |
+| **Long**   | Frontend Lead  | Xây dựng giao diện JSP, xử lý Servlet flow       |
+| **Hiếu**  | UI/UX Refactor | Tối ưu hóa CSS, thiết kế báo cáo JasperReports |
+
+### A3. Tài liệu tham khảo
+
+1. Java Documentation - Oracle.
+2. PostgreSQL 16 Manual.
+3. TutorialsPoint - Java Servlet & JSP.
