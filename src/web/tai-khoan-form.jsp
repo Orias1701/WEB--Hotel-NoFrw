@@ -8,7 +8,7 @@
                     Dữ liệu chi tiết Tài khoản
                 </div>
 
-                <form id="frmTK" action="tai-khoan-data" method="post">
+                <form id="frmTK" action="tai-khoan-data" method="post" onsubmit="return submitTKForm(event)">
                     <input type="hidden" id="tkAction" name="action" value="add">
 
                 <div class="modal-form-grid">
@@ -90,10 +90,30 @@
                 openModal('modalTK');
             }
 
-            function confirmDeleteTK() {
+            async function confirmDeleteTK() {
                 const id = document.getElementById('delMaTK').value;
                 if (confirm('Bạn có chắc chắn muốn xóa tài khoản #' + id + '?')) {
-                    document.getElementById('frmDelTK').submit();
+                    const form = document.getElementById('frmDelTK');
+                    const formData = new FormData(form);
+                    await fetch(form.getAttribute('action'), {
+                        method: form.getAttribute('method') || 'POST',
+                        body: new URLSearchParams(formData)
+                    });
+                    closeModal('modalTK');
+                    loadModule('tai-khoan', 'Tài khoản');
                 }
+            }
+
+            async function submitTKForm(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                await fetch(form.getAttribute('action'), {
+                    method: form.getAttribute('method') || 'POST',
+                    body: new URLSearchParams(formData)
+                });
+                closeModal('modalTK');
+                loadModule('tai-khoan', 'Tài khoản');
+                return false;
             }
         </script>

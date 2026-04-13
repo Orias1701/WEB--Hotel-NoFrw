@@ -7,7 +7,7 @@
                 Dữ liệu chi tiết Vai trò
             </div>
 
-            <form id="frmVT" action="vai-tro-data" method="post">
+            <form id="frmVT" action="vai-tro-data" method="post" onsubmit="return submitVTForm(event)">
                 <input type="hidden" id="vtAction" name="action" value="add">
 
                 <div class="modal-form-grid">
@@ -63,10 +63,30 @@
             openModal('modalVT');
         }
 
-        function confirmDeleteVT() {
+        async function confirmDeleteVT() {
             const id = document.getElementById('delMaVT').value;
             if (confirm('Bạn có chắc chắn muốn xóa vai trò #' + id + '?')) {
-                document.getElementById('frmDelVT').submit();
+                const form = document.getElementById('frmDelVT');
+                const formData = new FormData(form);
+                await fetch(form.getAttribute('action'), {
+                    method: form.getAttribute('method') || 'POST',
+                    body: new URLSearchParams(formData)
+                });
+                closeModal('modalVT');
+                loadModule('vai-tro', 'Vai trò');
             }
+        }
+
+        async function submitVTForm(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            await fetch(form.getAttribute('action'), {
+                method: form.getAttribute('method') || 'POST',
+                body: new URLSearchParams(formData)
+            });
+            closeModal('modalVT');
+            loadModule('vai-tro', 'Vai trò');
+            return false;
         }
     </script>
