@@ -125,10 +125,17 @@
                 openModal('modalHoaDon');
             }
 
-            function confirmModalPay() {
+            async function confirmModalPay() {
                 const id = document.getElementById('modalPayMaHD').value;
                 if (confirm('Xác nhận thanh toán hóa đơn #' + id + '?')) {
-                    document.getElementById('frmModalPayHD').submit();
+                    const form = document.getElementById('frmModalPayHD');
+                    const formData = new FormData(form);
+                    await fetch(form.getAttribute('action'), {
+                        method: form.getAttribute('method') || 'POST',
+                        body: new URLSearchParams(formData)
+                    });
+                    closeModal(form.closest('.modal-overlay').id);
+                    loadModule('hoa-don', 'Hóa đơn');
                 }
             }
         </script>
