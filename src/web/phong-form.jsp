@@ -7,7 +7,7 @@
                     Dữ liệu chi tiết Phòng
                 </div>
 
-                <form id="frmPhong" action="phong-data" method="post">
+                <form id="frmPhong" action="phong-data" method="post" onsubmit="return submitPhongForm(event)">
                     <input type="hidden" id="action" name="action" value="add">
 
                 <div class="modal-form-grid">
@@ -85,10 +85,30 @@
                 openModal('modalPhong');
             }
 
-            function confirmDeletePhong() {
+            async function confirmDeletePhong() {
                 const id = document.getElementById('delMaPhong').value;
                 if (confirm('Bạn có chắc chắn muốn xóa phòng #' + id + '?')) {
-                    document.getElementById('frmDelPhong').submit();
+                    const form = document.getElementById('frmDelPhong');
+                    const formData = new FormData(form);
+                    await fetch(form.getAttribute('action'), {
+                        method: form.getAttribute('method') || 'POST',
+                        body: new URLSearchParams(formData)
+                    });
+                    closeModal('modalPhong');
+                    loadModule('phong', 'Phòng');
                 }
+            }
+
+            async function submitPhongForm(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                await fetch(form.getAttribute('action'), {
+                    method: form.getAttribute('method') || 'POST',
+                    body: new URLSearchParams(formData)
+                });
+                closeModal('modalPhong');
+                loadModule('phong', 'Phòng');
+                return false;
             }
         </script>
