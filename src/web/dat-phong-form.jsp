@@ -10,7 +10,8 @@
                         Đặt phòng mới
                     </div>
 
-                    <form id="frmDatPhong" action="dat-phong-data" method="post">
+                    <form id="frmDatPhong" action="dat-phong-data" method="post"
+                        onsubmit="return validateDatPhongForm(event)">
                         <input type="hidden" id="dpAction" name="action" value="add">
                         <input type="hidden" id="maDatPhong" name="maDatPhong">
 
@@ -26,7 +27,8 @@
 
                             <div class="form-group full-width">
                                 <label class="mb-10 w-full" style="display: block;">Chọn Phòng (Trống): <span
-                                        class="font-size-11 color-gray-888" style="font-weight: normal;">(Tick chọn một hoặc
+                                        class="font-size-11 color-gray-888" style="font-weight: normal;">(Tick chọn một
+                                        hoặc
                                         nhiều phòng)</span></label>
                                 <div id="roomChecklist" class="room-checklist-container">
                                     <c:forEach var="p" items="${listPhongTrong}">
@@ -36,7 +38,8 @@
                                         </label>
                                     </c:forEach>
                                     <c:if test="${empty listPhongTrong}">
-                                        <div class="text-center color-gray-888 italic" style="grid-column: 1/-1;">Hết phòng trống</div>
+                                        <div class="text-center color-gray-888 italic" style="grid-column: 1/-1;">Hết
+                                            phòng trống</div>
                                     </c:if>
                                 </div>
                             </div>
@@ -101,31 +104,35 @@
                         </div>
                         <div class="form-group">
                             <label>Tiền phòng:</label>
-                            <input type="text" id="viewTienPhong" class="rounded-input bg-readonly color-primary text-bold" readonly>
+                            <input type="text" id="viewTienPhong"
+                                class="rounded-input bg-readonly color-primary text-bold" readonly>
                         </div>
                         <div class="form-group">
                             <label>Tiền phạt/Late fee:</label>
-                            <input type="text" id="viewTienPhat" class="rounded-input bg-readonly color-danger text-bold" readonly>
+                            <input type="text" id="viewTienPhat"
+                                class="rounded-input bg-readonly color-danger text-bold" readonly>
                         </div>
                     </div>
 
                     <div class="modal-footer flex-gap-10" style="flex-wrap: wrap;">
                         <!-- Checkout -->
-                        <form id="frmCheckout" action="dat-phong-data" method="post" style="display:inline;">
+                        <form id="frmCheckout" action="dat-phong-data" method="post" style="display:inline;" onsubmit="event.preventDefault(); submitSilent(this); return false;">
                             <input type="hidden" name="action" value="checkout">
                             <input type="hidden" id="checkoutId" name="maDatPhong">
                             <button type="submit" id="btnCheckout" class="btn-swing btn-warning">Trả phòng</button>
                         </form>
-                        <button type="button" id="btnDaTra" class="btn-swing btn-primary" style="display:none; pointer-events: none;">Đã trả</button>
-                        <button type="button" id="btnDaHuy" class="btn-swing btn-danger" style="display:none; pointer-events: none;">Đã hủy</button>
-                        
+                        <button type="button" id="btnDaTra" class="btn-swing btn-primary"
+                            style="display:none; pointer-events: none;">Đã trả</button>
+                        <button type="button" id="btnDaHuy" class="btn-swing btn-danger"
+                            style="display:none; pointer-events: none;">Đã hủy</button>
+
                         <!-- Delete (Hủy đặt) -->
-                        <form id="frmDelDP" action="dat-phong-data" method="post" style="display:none;">
+                        <form id="frmDelDP" action="dat-phong-data" method="post" style="display:none;" onsubmit="return false">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" id="deleteId" name="maDatPhong">
                         </form>
                         <button type="button" class="btn-swing btn-danger" id="btnHuyDat"
-                            onclick="if(confirm('Bạn có chắc chắn muốn hủy đơn đặt phòng này?')) { document.getElementById('frmDelDP').submit(); }">Hủy
+                            onclick="if(confirm('Bạn có chắc chắn muốn hủy đơn đặt phòng này?')) { submitSilent(document.getElementById('frmDelDP')); }">Hủy
                             đặt</button>
                         <button type="button" class="btn-swing btn-secondary"
                             onclick="closeModal('modalTraPhong')">Đóng</button>
@@ -134,6 +141,15 @@
             </div>
 
             <script>
+                async function submitSilent(form) {
+                    const formData = new FormData(form);
+                    await fetch(form.getAttribute('action'), {
+                        method: form.getAttribute('method') || 'POST',
+                        body: new URLSearchParams(formData)
+                    });
+                    closeModal(form.closest('.modal-overlay').id);
+                    loadModule('dat-phong', 'Đặt phòng');
+                }
                 function openDatPhongAdd() {
                     document.getElementById('frmDatPhong').reset();
                     document.getElementById('dpAction').value = 'add';
@@ -159,7 +175,7 @@
 
                     // Toggle Buttons based on status
                     const status = row_dataset.trangthai;
-                    
+
                     // Reset all
                     document.getElementById('frmCheckout').style.display = 'none';
                     document.getElementById('btnDaTra').style.display = 'none';
@@ -176,5 +192,41 @@
                     }
 
                     openModal('modalTraPhong');
+                }
+
+                function validateDatPhongForm(event) {
+                    const ngayNhanStr = document.getElementById('ngayNhan').value;
+                    const ngayHenTraStr = document.getElementById('ngayHenTra').value;
+
+                    if (ngayNhanStr && ngayHenTraStr) {
+                        const ngayNhan = new Date(ngayNhanStr);
+                        const ngayHenTra = new Date(ngayHenTraStr);
+
+                        const nowMinus1Hour = new Date();
+                        nowMinus1Hour.setHours(nowMinus1Hour.getHours() - 1);
+
+                        if (ngayNhan < nowMinus1Hour) {
+                            alert("Thời gian nhận phòng không hợp lệ.\n(Phải lớn hơn hoặc bằng thời gian hiện tại)");
+                            event.preventDefault();
+                            return false;
+                        }
+
+                        if (ngayHenTra < ngayNhan) {
+                            alert("Thời gian hẹn trả phòng không hợp lệ.\n(Phải lớn hơn hoặc bằng thời gian nhận phòng)");
+                            event.preventDefault();
+                            return false;
+                        }
+
+                        // Checkbox validation
+                        const checkboxes = document.querySelectorAll('input[name="maPhong"]:checked');
+                        if (checkboxes.length === 0) {
+                            alert("Vui lòng chọn ít nhất một phòng trống.");
+                            event.preventDefault();
+                            return false;
+                        }
+                    }
+                    
+                    submitSilent(event.target);
+                    return false;
                 }
             </script>
