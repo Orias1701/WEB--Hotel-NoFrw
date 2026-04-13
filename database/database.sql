@@ -1,6 +1,8 @@
 -- PostgreSQL Database Schema for hotelbook
 -- Migrated from SQL Server
 
+ALTER SYSTEM SET timezone = 'Asia/Ho_Chi_Minh';
+
 CREATE SCHEMA IF NOT EXISTS hotelbook;
 
 SET search_path TO hotelbook;
