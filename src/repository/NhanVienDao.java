@@ -115,19 +115,50 @@ public class NhanVienDao {
     }
 
     public int countNhanVien() {
-    String sql = "SELECT COUNT(*) FROM y_nhanvien";
+        String sql = "SELECT COUNT(*) FROM y_nhanvien";
 
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
-        if (rs.next()) {
-            return rs.getInt(1);   
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi countNhanVien: " + e.getMessage());
         }
-
-    } catch (Exception e) {
-        System.out.println("❌ Lỗi countNhanVien: " + e.getMessage());
+        return 0;
     }
-    return 0;
-}
+
+    public boolean existsByPhone(String phone, int excludeId) {
+        String sql = "SELECT COUNT(*) FROM y_nhanvien WHERE soDienThoai = ? AND maNhanVien != ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            ps.setInt(2, excludeId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi existsByPhone NV: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean existsByEmail(String email, int excludeId) {
+        if (email == null || email.trim().isEmpty()) return false;
+        String sql = "SELECT COUNT(*) FROM y_nhanvien WHERE email = ? AND maNhanVien != ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setInt(2, excludeId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi existsByEmail NV: " + e.getMessage());
+        }
+        return false;
+    }
 }
