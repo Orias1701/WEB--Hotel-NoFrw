@@ -150,4 +150,35 @@ public class KhachHangDao {
         return list;
     }
 
+    public boolean existsByPhone(String phone, int excludeId) {
+        String sql = "SELECT COUNT(*) FROM x_khachhang WHERE soDienThoai = ? AND maKhachHang != ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            ps.setInt(2, excludeId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi existsByPhone KH: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean existsByEmail(String email, int excludeId) {
+        if (email == null || email.trim().isEmpty()) return false;
+        String sql = "SELECT COUNT(*) FROM x_khachhang WHERE email = ? AND maKhachHang != ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setInt(2, excludeId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi existsByEmail KH: " + e.getMessage());
+        }
+        return false;
+    }
+
 }
