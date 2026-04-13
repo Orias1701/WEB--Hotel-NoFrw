@@ -117,10 +117,17 @@
             openModal('modalNV');
         }
 
-        function confirmDeleteNV() {
+        async function confirmDeleteNV() {
             const id = document.getElementById('delMaNV').value;
             if (confirm('Bạn có chắc chắn muốn xóa nhân viên #' + id + '?')) {
-                document.getElementById('frmDelNV').submit();
+                const form = document.getElementById('frmDelNV');
+                const formData = new FormData(form);
+                await fetch(form.getAttribute('action'), {
+                    method: form.getAttribute('method') || 'POST',
+                    body: new URLSearchParams(formData)
+                });
+                closeModal('modalNV');
+                loadModule('nhan-vien', 'Nhân viên');
             }
         }
 
@@ -141,7 +148,14 @@
                 if (data.isDuplicate) {
                     alert(data.message); // Inform user, do not submit, keep state identical
                 } else {
-                    form.submit(); // Valid! Proceed with standard form submit to Servlet
+                    // Send data silently
+                    const formData = new FormData(form);
+                    await fetch(form.getAttribute('action'), {
+                        method: form.getAttribute('method') || 'POST',
+                        body: new URLSearchParams(formData)
+                    });
+                    closeModal('modalNV');
+                    loadModule('nhan-vien', 'Nhân viên');
                 }
             } catch (err) {
                 console.error("Validation error:", err);
