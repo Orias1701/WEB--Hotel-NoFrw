@@ -7,7 +7,7 @@
                 Dữ liệu chi tiết Loại phòng
             </div>
 
-            <form id="frmLP" action="loai-phong-data" method="post">
+            <form id="frmLP" action="loai-phong-data" method="post" onsubmit="return submitLPForm(event)">
                 <input type="hidden" id="lpAction" name="action" value="add">
 
                 <div class="modal-form-grid">
@@ -69,10 +69,30 @@
             openModal('modalLP');
         }
 
-        function confirmDeleteLP() {
+        async function confirmDeleteLP() {
             const id = document.getElementById('delMaLP').value;
             if (confirm('Bạn có chắc chắn muốn xóa Loại phòng #' + id + '?')) {
-                document.getElementById('frmDelLP').submit();
+                const form = document.getElementById('frmDelLP');
+                const formData = new FormData(form);
+                await fetch(form.getAttribute('action'), {
+                    method: form.getAttribute('method') || 'POST',
+                    body: new URLSearchParams(formData)
+                });
+                closeModal('modalLP');
+                loadModule('loai-phong', 'Loại phòng');
             }
+        }
+
+        async function submitLPForm(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            await fetch(form.getAttribute('action'), {
+                method: form.getAttribute('method') || 'POST',
+                body: new URLSearchParams(formData)
+            });
+            closeModal('modalLP');
+            loadModule('loai-phong', 'Loại phòng');
+            return false;
         }
     </script>
