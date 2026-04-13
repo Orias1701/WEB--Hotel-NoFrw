@@ -7,7 +7,7 @@
                 Dữ liệu chi tiết Nhân viên
             </div>
 
-            <form id="frmNV" action="nhan-vien-data" method="post">
+            <form id="frmNV" action="nhan-vien-data" method="post" onsubmit="return validateNVForm(event)">
                 <input type="hidden" id="nvAction" name="action" value="add">
 
                 <div class="modal-form-grid">
@@ -122,5 +122,32 @@
             if (confirm('Bạn có chắc chắn muốn xóa nhân viên #' + id + '?')) {
                 document.getElementById('frmDelNV').submit();
             }
+        }
+
+        async function validateNVForm(event) {
+            event.preventDefault(); // Stop default submit temporarily
+            
+            const form = event.target;
+            const phone = document.getElementById('nvSoDienThoai').value;
+            const email = document.getElementById('nvEmail').value;
+            const id = document.getElementById('maNhanVien').value || "0";
+            
+            try {
+                // Encode params to safely handle special chars like + in phone or @ in email
+                const query = "type=nhanvien&id=" + id + "&phone=" + encodeURIComponent(phone) + "&email=" + encodeURIComponent(email);
+                const response = await fetch('check-duplicate?' + query);
+                const data = await response.json();
+                
+                if (data.isDuplicate) {
+                    alert(data.message); // Inform user, do not submit, keep state identical
+                } else {
+                    form.submit(); // Valid! Proceed with standard form submit to Servlet
+                }
+            } catch (err) {
+                console.error("Validation error:", err);
+                alert("Lỗi kiểm tra thông tin. Vui lòng thử lại!");
+            }
+            
+            return false;
         }
     </script>
