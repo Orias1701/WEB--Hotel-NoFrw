@@ -28,7 +28,7 @@ public class DBConnection {
 
             if (url == null || user == null) {
                 System.out.println("⚠️ Không tìm thấy biến môi trường trong .env. Sử dụng mặc định.");
-                url = "jdbc:postgresql://localhost:5432/hotelmanage?currentSchema=hotelmanage&TimeZone=Asia/Ho_Chi_Minh";
+                url = "jdbc:postgresql://localhost:5432/postgres?currentSchema=hotelbook&TimeZone=Asia/Ho_Chi_Minh";
                 user = "postgres";
                 pass = "postgres";
                 timez = "Asia/Ho_Chi_Minh";
