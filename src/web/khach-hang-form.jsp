@@ -7,7 +7,7 @@
                 Dữ liệu chi tiết Khách hàng
             </div>
 
-            <form id="frmKH" action="khach-hang-data" method="post">
+            <form id="frmKH" action="khach-hang-data" method="post" onsubmit="return validateKHForm(event)">
                 <input type="hidden" id="khAction" name="action" value="add">
 
                 <div class="modal-form-grid">
@@ -80,5 +80,32 @@
             if (confirm('Bạn có chắc chắn muốn xóa khách hàng #' + id + '?')) {
                 document.getElementById('frmDelKH').submit();
             }
+        }
+
+        async function validateKHForm(event) {
+            event.preventDefault(); // Stop default submit temporarily
+            
+            const form = event.target;
+            const phone = document.getElementById('khSoDienThoai').value;
+            const email = document.getElementById('khEmail').value;
+            const id = document.getElementById('maKhachHang').value || "0";
+            
+            try {
+                // Encode params to safely handle special chars
+                const query = "type=khachhang&id=" + id + "&phone=" + encodeURIComponent(phone) + "&email=" + encodeURIComponent(email);
+                const response = await fetch('check-duplicate?' + query);
+                const data = await response.json();
+                
+                if (data.isDuplicate) {
+                    alert(data.message); // Inform user, do not submit
+                } else {
+                    form.submit(); // Valid! Proceed with standard form submit to Servlet
+                }
+            } catch (err) {
+                console.error("Validation error:", err);
+                alert("Lỗi kiểm tra thông tin. Vui lòng thử lại!");
+            }
+            
+            return false;
         }
     </script>
